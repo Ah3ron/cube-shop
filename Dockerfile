@@ -26,11 +26,11 @@ RUN apk add --no-cache ca-certificates
 # Copy the binary from builder
 COPY --from=builder /app/backend/main .
 
+# Ensure the binary is executable
+RUN chmod +x ./main
+
 # Expose port
 EXPOSE 3000
 
-# Print the contents of the directory
-CMD [ "ls", '-la' ]
-
 # Run the application
-ENTRYPOINT [ "./main" ]
+ENTRYPOINT ["./main"]
