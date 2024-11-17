@@ -10,6 +10,28 @@ export default {
 			fallback: undefined,
 			precompress: false,
 			strict: true
-		})
+		}),
+		prerender: {
+			handleHttpError: ({ path, message }) => {
+				// ignore deliberate link to shiny 404 page
+				if (
+					[
+						'/new',
+						'/bestsellers',
+						'/sale',
+						'/cookie',
+						'/contact',
+						'/jobs',
+						'/terms',
+						'/privacy'
+					].includes(path)
+				) {
+					return;
+				}
+
+				// otherwise fail the build
+				throw new Error(message);
+			}
+		}
 	}
 };
