@@ -23,7 +23,7 @@ FROM node:23 AS frontend-builder
 WORKDIR /app/frontend
 
 # Copy package files and install dependencies using pnpm
-COPY frontend/package.json frontend/pnpm-lock.json ./
+COPY frontend/package.json ./
 RUN npm install -g pnpm
 RUN pnpm install
 
