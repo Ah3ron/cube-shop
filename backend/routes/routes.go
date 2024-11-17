@@ -8,6 +8,9 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
+	// Static files
+	app.Static("/", "./build/")
+
 	// Public routes
 	auth := app.Group("/auth")
 	auth.Post("/register", handlers.Register)
