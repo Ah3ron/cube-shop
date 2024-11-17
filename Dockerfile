@@ -12,15 +12,15 @@ RUN go mod download
 # Copy source code
 COPY backend/ .
 
-# Build the application
-RUN CGO_ENABLED=1 GOOS=linux go build -o main .
+# Build the application as a statically linked binary
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
 # Final stage
 FROM alpine:3.20.3
 
 WORKDIR /app
 
-# Install required runtime dependencies
+# Install required runtime dependencies (if needed)
 RUN apk add --no-cache ca-certificates
 
 # Copy the binary from builder
