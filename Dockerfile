@@ -30,7 +30,7 @@ COPY --from=builder /app/backend/main .
 RUN chmod +x ./main
 
 # Expose port
-EXPOSE 3000
+EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["./main"]
