@@ -29,5 +29,8 @@ COPY --from=builder /app/backend/main .
 # Expose port
 EXPOSE 3000
 
+# Print the contents of the directory
+CMD [ "ls", '-la' ]
+
 # Run the application
 ENTRYPOINT [ "./main" ]
