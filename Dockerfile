@@ -43,8 +43,7 @@ WORKDIR /app
 RUN apk add --no-cache ca-certificates
 
 # Copy built frontend assets
-COPY --from=frontend-builder /app/frontend/build .
-
+COPY --from=frontend-builder /app/frontend/build ./build
 # Copy the backend binary from builder
 COPY --from=backend-builder /app/backend/main .
 
@@ -54,6 +53,5 @@ RUN chmod +x ./main
 # Expose application port
 EXPOSE 8080
 
-RUN ls
 # Run the backend application
 ENTRYPOINT ["./main"]
