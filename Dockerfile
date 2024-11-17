@@ -54,5 +54,6 @@ RUN chmod +x ./main
 # Expose application port
 EXPOSE 8080
 
+RUN ls
 # Run the backend application
 ENTRYPOINT ["./main"]
