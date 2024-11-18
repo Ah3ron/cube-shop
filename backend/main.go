@@ -12,7 +12,9 @@ import (
 
 func main() {
 	// Initialize app
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		EnableTrustedProxyCheck: true,
+	})
 
 	// Middleware
 	app.Use(logger.New())

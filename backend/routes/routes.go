@@ -30,9 +30,21 @@ func SetupRoutes(app *fiber.App) {
 	products.Put("/:id", handlers.UpdateProduct)
 	products.Delete("/:id", handlers.DeleteProduct)
 
-	// Static file serving
-	app.Static("/", "./build")
-	app.Static("/_app", "./build/_app")
+	// Static file serving with MIME types
+	app.Static("/_app", "./build/_app", fiber.Static{
+		ByteRange: true,
+		Browse:    false,
+		MaxAge:    3600,
+		ModifyResponse: func(c *fiber.Ctx) error {
+			if filepath.Ext(c.Path()) == ".js" {
+				c.Type("application/javascript", "charset=utf-8")
+			}
+			if filepath.Ext(c.Path()) == ".mjs" {
+				c.Type("application/javascript", "charset=utf-8")
+			}
+			return nil
+		},
+	})
 
 	// SPA fallback route
 	app.Get("/*", func(c *fiber.Ctx) error {
