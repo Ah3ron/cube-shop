@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Initialize app
-	app := fiber.New(fiber.Config{StrictRouting: true})
+	app := fiber.New()
 
 	// Middleware
 	app.Use(logger.New())

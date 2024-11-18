@@ -1,6 +1,4 @@
 <script>
-	import { goto } from '$app/navigation';
-
 	let email = '';
 	let password = '';
 	let error = '';
@@ -21,7 +19,7 @@
 
 			const data = await res.json();
 			localStorage.setItem('token', data.token);
-			goto('/');
+			window.location.href = "/"
 		} catch (err) {
 			error = err.message;
 		}

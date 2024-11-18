@@ -1,7 +1,5 @@
 <!-- src/routes/auth/register/+page.svelte -->
 <script>
-	import { goto } from '$app/navigation';
-
 	let name = '';
 	let email = '';
 	let password = '';
@@ -21,7 +19,7 @@
 				throw new Error(data.error);
 			}
 
-			goto('/auth/login');
+			window.location.href = '/auth/login';
 		} catch (err) {
 			error = err.message;
 		}

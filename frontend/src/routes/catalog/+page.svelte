@@ -1,62 +1,66 @@
 <script>
-	import { onMount } from 'svelte';
+    import { onMount } from 'svelte';
 
-	let products = [];
-	let loading = true;
-	let error = null;
+    let products = [];
+    let loading = true;
+    let error = null;
 
-	// Filter states
-	let filters = {
-		category: '',
-		difficulty: '',
-		brand: '',
-		price: { min: 0, max: 100 },
-		inStock: false
-	};
+    // Filter states
+    let filters = {
+        category: '',
+        difficulty: '',
+        brand: '',
+        price: { min: 0, max: 100 },
+        inStock: false
+    };
 
-	// Unique values for filters
-	let categories = new Set();
-	let difficulties = new Set();
-	let brands = new Set();
+    // Declare Set variables first
+    let categories = new Set();
+    let difficulties = new Set();
+    let brands = new Set();
 
-	onMount(async () => {
-		loading = true;
-		try {
-			const token = localStorage.getItem('token');
-			if (!token) {
-				goto('/auth/login');
-				return;
-			}
+    // Reactive statement to update Sets
+    $: {
+        if (products.length > 0) {
+            categories = new Set(products.map(p => p.category));
+            difficulties = new Set(products.map(p => p.difficulty));
+            brands = new Set(products.map(p => p.brand));
+        }
+    }
 
-			const response = await fetch('/api/products', {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
+    onMount(async () => {
+        loading = true;
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/auth/login';
+                return;
 
-			if (response.status === 401) {
-				localStorage.removeItem('token');
-				goto('/auth/login');
-				return;
-			}
+            }
 
-			if (!response.ok) {
-				throw new Error('Failed to fetch products');
-			}
+            const response = await fetch('/api/products', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
 
-			products = await response.json();
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/auth/login';
+                return;
+            }
 
-			products.forEach((p) => {
-				categories.add(p.category);
-				difficulties.add(p.difficulty);
-				brands.add(p.brand);
-			});
-		} catch (err) {
-			error = err.message;
-		} finally {
-			loading = false;
-		}
-	});
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
+            }
+
+            products = await response.json();
+        } catch (err) {
+            error = err.message;
+        } finally {
+            loading = false;
+        }
+    });
 
 	$: filteredProducts = products.filter((p) => {
 		return (
