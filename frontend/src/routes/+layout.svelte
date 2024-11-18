@@ -46,9 +46,7 @@
 					class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 				>
 					<li><a href="/" class:active={$page.url.pathname === '/'}>Home</a></li>
-					{#if isAuthenticated}
-						<li><a href="/catalog" class:active={$page.url.pathname === '/catalog'}>Catalog</a></li>
-					{/if}
+					<li><a href="/catalog" class:active={$page.url.pathname === '/catalog'}>Catalog</a></li>
 					<li><a href="/about" class:active={$page.url.pathname === '/about'}>About</a></li>
 				</ul>
 			</div>
