@@ -31,24 +31,7 @@
     onMount(async () => {
         loading = true;
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/auth/login';
-                return;
-
-            }
-
-            const response = await fetch('/api/products', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (response.status === 401) {
-                localStorage.removeItem('token');
-                window.location.href = '/auth/login';
-                return;
-            }
+            const response = await fetch('/api/products')
 
             if (!response.ok) {
                 throw new Error('Failed to fetch products');

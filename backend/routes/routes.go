@@ -18,10 +18,13 @@ func SetupRoutes(app *fiber.App) {
 	auth.Post("/register", handlers.Register)
 	auth.Post("/login", handlers.Login)
 
+	// Unprotected catalog route
+	api.Get("/catalog", handlers.GetProducts)
+
 	// Protected API routes
 	protected := api.Group("/", middleware.Protected())
+	protected.Get("/profile", handlers.GetProfile)
 	products := protected.Group("/products")
-	products.Get("/", handlers.GetProducts)
 	products.Post("/", handlers.CreateProduct)
 	products.Get("/:id", handlers.GetProduct)
 	products.Put("/:id", handlers.UpdateProduct)
@@ -33,12 +36,10 @@ func SetupRoutes(app *fiber.App) {
 
 	// SPA fallback route
 	app.Get("/*", func(c *fiber.Ctx) error {
-		// Check if requested path exists as a static file
 		path := c.Path()
 		fullPath := filepath.Join("./build", path)
 
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-			// If file doesn't exist, serve index.html
 			return c.SendFile("./build/index.html")
 		}
 

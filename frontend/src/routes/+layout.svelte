@@ -1,7 +1,20 @@
 <script>
-	import '../app.css';
-	let { children } = $props();
-	import { page } from '$app/stores';
+    import '../app.css';
+    let { children } = $props();
+    import { page } from '$app/stores';
+    
+    let isAuthenticated = $state(false);
+    
+    function handleLogout() {
+        localStorage.removeItem('token');
+        window.location.href = '/auth/login';
+    }
+    
+    $effect(() => {
+        if (typeof window !== 'undefined') {
+            isAuthenticated = !!localStorage.getItem('token');
+        }
+    });
 </script>
 
 <div class="min-h-screen flex flex-col">
@@ -12,46 +25,58 @@
 				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 				<!-- svelte-ignore a11y_label_has_associated_control -->
 				<label tabindex="0" class="btn btn-ghost lg:hidden">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h8m-8 6h16"
-						/>
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
 					</svg>
 				</label>
 				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-				<ul
-					tabindex="0"
-					class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-				>
+				<ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
 					<li><a href="/" class:active={$page.url.pathname === '/'}>Home</a></li>
-					<li><a href="/catalog" class:active={$page.url.pathname === '/catalog'}>Catalog</a></li>
+					{#if isAuthenticated}
+						<li><a href="/catalog" class:active={$page.url.pathname === '/catalog'}>Catalog</a></li>
+					{/if}
 					<li><a href="/about" class:active={$page.url.pathname === '/about'}>About</a></li>
 				</ul>
 			</div>
 			<a href="/" class="btn btn-ghost normal-case text-xl">CubeShop</a>
 		</div>
-
+	
 		<div class="navbar-center hidden lg:flex">
 			<ul class="menu menu-horizontal px-1">
 				<li><a href="/" class:active={$page.url.pathname === '/'}>Home</a></li>
-				<li><a href="/catalog" class:active={$page.url.pathname === '/catalog'}>Catalog</a></li>
+				{#if isAuthenticated}
+					<li><a href="/catalog" class:active={$page.url.pathname === '/catalog'}>Catalog</a></li>
+				{/if}
 				<li><a href="/about" class:active={$page.url.pathname === '/about'}>About</a></li>
 			</ul>
 		</div>
-
+	
 		<div class="navbar-end">
-			<a href="/auth/login" class="btn btn-primary ml-4">Login</a>
+			{#if isAuthenticated}
+				<div class="dropdown dropdown-end">
+					<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+					<!-- svelte-ignore a11y_label_has_associated_control -->
+					<label tabindex="0" class="btn btn-ghost btn-circle avatar placeholder">
+						<div class="w-10 rounded-full flex items-center justify-center">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+							</svg>
+						</div>
+					</label>
+					<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+					<ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+						<li><a href="/profile">Profile</a></li>
+						<li><a href="/orders">Orders</a></li>
+						<li><a href="/settings">Settings</a></li>
+						<li><button onclick={handleLogout}>Logout</button></li>
+					</ul>
+				</div>
+			{:else}
+				<a href="/auth/login" class="btn btn-primary ml-4">Login</a>
+			{/if}
 		</div>
 	</header>
+	
 
 	<!-- Main content -->
 	<main class="flex-grow pt-16">
