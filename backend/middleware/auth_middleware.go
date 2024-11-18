@@ -18,12 +18,12 @@ func Protected() fiber.Handler {
 		AuthScheme:   "Bearer",
 		SuccessHandler: func(c *fiber.Ctx) error {
 			rawToken := c.Locals("user")
-			token, ok := rawToken.(*jwt.Token)
-			if !ok {
-				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-					"error": "Invalid token format",
-				})
-			}
+			token, _ := rawToken.(*jwt.Token)
+			// if !ok {
+			// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			// 		"error": "Invalid token format",
+			// 	})
+			// }
 
 			claims, ok := token.Claims.(jwt.MapClaims)
 			if !ok {
