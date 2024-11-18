@@ -5,7 +5,6 @@ import (
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
 )
 
 func Protected() fiber.Handler {
@@ -16,32 +15,6 @@ func Protected() fiber.Handler {
 		ErrorHandler: jwtError,
 		TokenLookup:  "header:Authorization",
 		AuthScheme:   "Bearer",
-		SuccessHandler: func(c *fiber.Ctx) error {
-			rawToken := c.Locals("user")
-			token, _ := rawToken.(*jwt.Token)
-			// if !ok {
-			// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			// 		"error": "Invalid token format",
-			// 	})
-			// }
-
-			claims, ok := token.Claims.(jwt.MapClaims)
-			if !ok {
-				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-					"error": "Invalid token claims",
-				})
-			}
-
-			// Verify required claims exist
-			if _, exists := claims["user_id"]; !exists {
-				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-					"error": "Missing user_id claim",
-				})
-			}
-
-			c.Locals("claims", claims)
-			return c.Next()
-		},
 	})
 }
 
