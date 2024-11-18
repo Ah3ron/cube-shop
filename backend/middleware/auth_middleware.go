@@ -18,17 +18,29 @@ func Protected() fiber.Handler {
 		AuthScheme:   "Bearer",
 		SuccessHandler: func(c *fiber.Ctx) error {
 			rawToken := c.Locals("user")
-
-			if token, ok := rawToken.(*jwt.Token); ok {
-				if claims, ok := token.Claims.(jwt.MapClaims); ok {
-					c.Locals("claims", claims)
-					return c.Next()
-				}
+			token, ok := rawToken.(*jwt.Token)
+			if !ok {
+				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+					"error": "Invalid token format",
+				})
 			}
 
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Invalid token claims",
-			})
+			claims, ok := token.Claims.(jwt.MapClaims)
+			if !ok {
+				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+					"error": "Invalid token claims",
+				})
+			}
+
+			// Verify required claims exist
+			if _, exists := claims["user_id"]; !exists {
+				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+					"error": "Missing user_id claim",
+				})
+			}
+
+			c.Locals("claims", claims)
+			return c.Next()
 		},
 	})
 }
