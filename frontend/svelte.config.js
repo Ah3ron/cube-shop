@@ -11,6 +11,14 @@ export default {
 			precompress: false,
 			strict: true
 		}),
+		csp: {
+			mode: 'auto',
+			directives: {
+				'script-src': ['self'],
+				'upgrade-insecure-requests': false,
+				'block-all-mixed-content': false
+			}
+		},
 		prerender: {
 			handleHttpError: ({ path, message }) => {
 				// ignore deliberate link to shiny 404 page
