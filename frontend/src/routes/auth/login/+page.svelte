@@ -19,7 +19,7 @@
 
 			const data = await res.json();
 			localStorage.setItem('token', data.token);
-			window.location.href = "/"
+			window.location.href = '/';
 		} catch (err) {
 			error = err.message;
 		}

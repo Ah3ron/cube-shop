@@ -1,49 +1,49 @@
 <script>
-    import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-    let products = [];
-    let loading = true;
-    let error = null;
+	let products = [];
+	let loading = true;
+	let error = null;
 
-    // Filter states
-    let filters = {
-        category: '',
-        difficulty: '',
-        brand: '',
-        price: { min: 0, max: 100 },
-        inStock: false
-    };
+	// Filter states
+	let filters = {
+		category: '',
+		difficulty: '',
+		brand: '',
+		price: { min: 0, max: 100 },
+		inStock: false
+	};
 
-    // Declare Set variables first
-    let categories = new Set();
-    let difficulties = new Set();
-    let brands = new Set();
+	// Declare Set variables first
+	let categories = new Set();
+	let difficulties = new Set();
+	let brands = new Set();
 
-    // Reactive statement to update Sets
-    $: {
-        if (products.length > 0) {
-            categories = new Set(products.map(p => p.category));
-            difficulties = new Set(products.map(p => p.difficulty));
-            brands = new Set(products.map(p => p.brand));
-        }
-    }
+	// Reactive statement to update Sets
+	$: {
+		if (products.length > 0) {
+			categories = new Set(products.map((p) => p.category));
+			difficulties = new Set(products.map((p) => p.difficulty));
+			brands = new Set(products.map((p) => p.brand));
+		}
+	}
 
-    onMount(async () => {
-        loading = true;
-        try {
-            const response = await fetch('/api/products')
+	onMount(async () => {
+		loading = true;
+		try {
+			const response = await fetch('/api/products');
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch products');
-            }
+			if (!response.ok) {
+				throw new Error('Failed to fetch products');
+			}
 
-            products = await response.json();
-        } catch (err) {
-            error = err.message;
-        } finally {
-            loading = false;
-        }
-    });
+			products = await response.json();
+		} catch (err) {
+			error = err.message;
+		} finally {
+			loading = false;
+		}
+	});
 
 	$: filteredProducts = products.filter((p) => {
 		return (
