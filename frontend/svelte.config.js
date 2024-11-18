@@ -40,6 +40,7 @@ export default {
 				// otherwise fail the build
 				throw new Error(message);
 			}
-		}
+		},
+		preloadStrategy: 'preload-js'
 	}
 };
