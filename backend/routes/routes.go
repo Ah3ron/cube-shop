@@ -30,43 +30,8 @@ func SetupRoutes(app *fiber.App) {
 	products.Put("/:id", handlers.UpdateProduct)
 	products.Delete("/:id", handlers.DeleteProduct)
 
-	// Static file serving with MIME types
-	app.Static("/", "./build", fiber.Static{
-		ByteRange: true,
-		Browse:    false,
-		MaxAge:    3600,
-		ModifyResponse: func(c *fiber.Ctx) error {
-			ext := filepath.Ext(c.Path())
-			switch ext {
-			case ".js":
-				c.Type("application/javascript; charset=utf-8")
-			case ".mjs":
-				c.Type("application/javascript; charset=utf-8")
-			case ".css":
-				c.Type("text/css; charset=utf-8")
-			}
-			return nil
-		},
-	})
-
-	// Specific _app directory handling
-	app.Static("/_app", "./build/_app", fiber.Static{
-		ByteRange: true,
-		Browse:    false,
-		MaxAge:    3600,
-		ModifyResponse: func(c *fiber.Ctx) error {
-			ext := filepath.Ext(c.Path())
-			switch ext {
-			case ".js":
-				c.Type("application/javascript; charset=utf-8")
-			case ".mjs":
-				c.Type("application/javascript; charset=utf-8")
-			case ".css":
-				c.Type("text/css; charset=utf-8")
-			}
-			return nil
-		},
-	})
+	// Static file serving
+	app.Static("/", "./build")
 
 	// SPA fallback route
 	app.Get("/*", func(c *fiber.Ctx) error {
