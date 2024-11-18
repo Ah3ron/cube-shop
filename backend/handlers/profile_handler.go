@@ -9,9 +9,7 @@ import (
 )
 
 func GetProfile(c *fiber.Ctx) error {
-	// Get user from JWT token using the correct type
-	token := c.Locals("user").(*jwt.Token)
-	claims := token.Claims.(jwt.MapClaims)
+	claims := c.Locals("claims").(jwt.MapClaims)
 	userID := uint(claims["user_id"].(float64))
 
 	// Fetch user from database
@@ -23,7 +21,6 @@ func GetProfile(c *fiber.Ctx) error {
 		})
 	}
 
-	// Return formatted user data
 	return c.JSON(fiber.Map{
 		"name":     userData.Name,
 		"email":    userData.Email,

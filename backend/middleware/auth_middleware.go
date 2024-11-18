@@ -17,14 +17,13 @@ func Protected() fiber.Handler {
 		TokenLookup:  "header:Authorization",
 		AuthScheme:   "Bearer",
 		SuccessHandler: func(c *fiber.Ctx) error {
-			// Convert token to the correct type
 			token := c.Locals("user").(*jwt.Token)
-			c.Locals("user", token)
+			claims := token.Claims.(jwt.MapClaims)
+			c.Locals("claims", claims)
 			return c.Next()
 		},
 	})
 }
-
 func jwtError(c *fiber.Ctx, err error) error {
 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 		"error":   "Unauthorized",
