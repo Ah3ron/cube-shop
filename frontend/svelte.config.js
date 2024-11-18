@@ -41,6 +41,6 @@ export default {
 				throw new Error(message);
 			}
 		},
-		preloadStrategy: 'preload-js'
+		output: { preloadStrategy: 'preload-js' }
 	}
 };
