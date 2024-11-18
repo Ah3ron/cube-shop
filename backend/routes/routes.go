@@ -18,8 +18,8 @@ func SetupRoutes(app *fiber.App) {
 	auth.Post("/register", handlers.Register)
 	auth.Post("/login", handlers.Login)
 
-	// Unprotected catalog route
-	api.Get("/catalog", handlers.GetProducts)
+	// Unprotected routes
+	api.Get("/products", handlers.GetProducts)
 
 	// Protected API routes
 	protected := api.Group("/", middleware.Protected())
