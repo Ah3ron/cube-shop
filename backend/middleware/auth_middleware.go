@@ -5,6 +5,7 @@ import (
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func Protected() fiber.Handler {
@@ -15,6 +16,12 @@ func Protected() fiber.Handler {
 		ErrorHandler: jwtError,
 		TokenLookup:  "header:Authorization",
 		AuthScheme:   "Bearer",
+		SuccessHandler: func(c *fiber.Ctx) error {
+			// Convert token to the correct type
+			token := c.Locals("user").(*jwt.Token)
+			c.Locals("user", token)
+			return c.Next()
+		},
 	})
 }
 
