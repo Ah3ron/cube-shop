@@ -4,6 +4,7 @@ import (
 	"cube-shop/database"
 	"cube-shop/routes"
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cache"
@@ -25,7 +26,13 @@ func main() {
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelBestSpeed,
 	}))
-	app.Use(cache.New())
+	app.Use(cache.New(cache.Config{
+		Next: func(c *fiber.Ctx) bool {
+			return c.Query("noCache") == "true"
+		},
+		Expiration:   30 * time.Minute,
+		CacheControl: true,
+	}))
 
 	// Connect to database
 	database.Connect()
