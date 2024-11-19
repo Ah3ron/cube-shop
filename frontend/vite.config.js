@@ -10,5 +10,22 @@ export default defineConfig({
 				changeOrigin: true
 			}
 		}
+	},
+	build: {
+		minify: 'terser',
+		terserOptions: {
+			compress: {
+				drop_console: true,
+				drop_debugger: true
+			},
+			format: {
+				comments: false
+			}
+		},
+		rollupOptions: {
+			output: {
+				manualChunks: undefined
+			}
+		}
 	}
 });
