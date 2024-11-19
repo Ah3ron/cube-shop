@@ -11,8 +11,8 @@
 
 {#if visible}
 	<div class="hero min-h-screen bg-base-200" in:fade={{ duration: 1000 }}>
-		<div class="hero-content text-center">
-			<div class="max-w-md">
+		<div class="hero-content text-center w-full max-w-[1200px]">
+			<div class="max-w-md h-[300px]">
 				<h1 class="text-5xl font-bold" in:fly={{ y: 50, duration: 1000 }}>CubeShop</h1>
 				<p class="py-6" in:fly={{ y: 50, duration: 1000, delay: 200 }}>
 					Your one-stop destination for all types of cubes and puzzles

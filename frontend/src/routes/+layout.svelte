@@ -17,6 +17,14 @@
 	});
 </script>
 
+<svelte:head>
+	<title>CubeShop - Your One-Stop Cube Store</title>
+	<meta
+		name="description"
+		content="Browse our collection of cubes and puzzles for all skill levels. Fast worldwide shipping and expert advice from our community."
+	/>
+</svelte:head>
+
 <div class="min-h-screen flex flex-col">
 	<!-- Header -->
 	<header class="navbar bg-base-100 shadow-lg fixed top-0 z-50">
