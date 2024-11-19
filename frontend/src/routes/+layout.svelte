@@ -56,9 +56,7 @@
 		<div class="navbar-center hidden lg:flex">
 			<ul class="menu menu-horizontal px-1">
 				<li><a href="/" class:active={$page.url.pathname === '/'}>Home</a></li>
-				{#if isAuthenticated}
-					<li><a href="/catalog" class:active={$page.url.pathname === '/catalog'}>Catalog</a></li>
-				{/if}
+				<li><a href="/catalog" class:active={$page.url.pathname === '/catalog'}>Catalog</a></li>
 				<li><a href="/about" class:active={$page.url.pathname === '/about'}>About</a></li>
 			</ul>
 		</div>
