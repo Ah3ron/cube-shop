@@ -2,13 +2,13 @@
 	import { fade, fly } from 'svelte/transition';
 </script>
 
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-10">
 	<div class="max-w-4xl mx-auto">
-		<div in:fade={{ duration: 1000 }}>
+		<div in:fade={{ duration: 400 }}>
 			<h1 class="text-4xl font-bold mb-8 text-center">About CubeShop</h1>
 
 			<div class="prose lg:prose-xl mx-auto">
-				<div class="card bg-base-100 shadow-xl mb-8" in:fly={{ y: 50, duration: 1000 }}>
+				<div class="card bg-base-200 shadow-xl mb-8" in:fly={{ y: 50, duration: 400 }}>
 					<div class="card-body">
 						<h2 class="card-title">Our Story</h2>
 						<p>
@@ -20,7 +20,7 @@
 				</div>
 
 				<div class="grid md:grid-cols-3 gap-6 mb-8">
-					<div class="card bg-base-100 shadow-xl" in:fly={{ y: 50, duration: 1000, delay: 200 }}>
+					<div class="card bg-base-200 shadow-xl" in:fly={{ y: 50, duration: 400, delay: 100 }}>
 						<div class="card-body items-center text-center">
 							<div class="text-4xl mb-4">🎯</div>
 							<h3 class="card-title">Mission</h3>
@@ -28,7 +28,7 @@
 						</div>
 					</div>
 
-					<div class="card bg-base-100 shadow-xl" in:fly={{ y: 50, duration: 1000, delay: 400 }}>
+					<div class="card bg-base-200 shadow-xl" in:fly={{ y: 50, duration: 400, delay: 200 }}>
 						<div class="card-body items-center text-center">
 							<div class="text-4xl mb-4">👥</div>
 							<h3 class="card-title">Community</h3>
@@ -36,7 +36,7 @@
 						</div>
 					</div>
 
-					<div class="card bg-base-100 shadow-xl" in:fly={{ y: 50, duration: 1000, delay: 600 }}>
+					<div class="card bg-base-200 shadow-xl" in:fly={{ y: 50, duration: 400, delay: 300 }}>
 						<div class="card-body items-center text-center">
 							<div class="text-4xl mb-4">💡</div>
 							<h3 class="card-title">Innovation</h3>
@@ -45,7 +45,7 @@
 					</div>
 				</div>
 
-				<div class="card bg-base-100 shadow-xl mb-8" in:fly={{ y: 50, duration: 1000, delay: 800 }}>
+				<div class="card bg-base-200 shadow-xl mb-8" in:fly={{ y: 50, duration: 400, delay: 400 }}>
 					<div class="card-body">
 						<h2 class="card-title">Our Team</h2>
 						<p>
@@ -56,7 +56,7 @@
 					</div>
 				</div>
 
-				<div class="card bg-base-100 shadow-xl" in:fly={{ y: 50, duration: 1000, delay: 1000 }}>
+				<div class="card bg-base-200 shadow-xl" in:fly={{ y: 50, duration: 400, delay: 500 }}>
 					<div class="card-body">
 						<h2 class="card-title">Contact Us</h2>
 						<div class="space-y-4">

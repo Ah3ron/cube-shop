@@ -1,4 +1,5 @@
 <script>
+	import { fade, fly, scale } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
 	let products = [];
@@ -60,8 +61,8 @@
 <div class="container mx-auto px-4 py-8">
 	<div class="flex flex-col md:flex-row gap-8">
 		<!-- Filters -->
-		<div class="w-full md:w-64 space-y-4">
-			<div class="card bg-base-100 shadow">
+		<div class="w-full md:w-64 space-y-4" in:fly={{ x: -50, duration: 1000 }}>
+			<div class="card bg-base-100 shadow" in:scale={{ duration: 800, delay: 200 }}>
 				<div class="card-body">
 					<h2 class="card-title">Filters</h2>
 
@@ -143,15 +144,15 @@
 		</div>
 
 		<!-- Products Grid -->
-		<div class="flex-1">
-			<h1 class="text-3xl font-bold mb-8">Product Catalog</h1>
+		<div class="flex-1" in:fly={{ y: 50, duration: 1000 }}>
+			<h1 class="text-3xl font-bold mb-8" in:fly={{ y: -20, duration: 800 }}>Product Catalog</h1>
 
 			{#if loading}
-				<div class="flex justify-center">
+				<div class="flex justify-center" in:fade={{ duration: 200 }}>
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
 			{:else if error}
-				<div class="alert alert-error">
+				<div class="alert alert-error" in:fly={{ x: -20, duration: 500 }}>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						class="stroke-current shrink-0 h-6 w-6"
@@ -169,8 +170,12 @@
 				</div>
 			{:else}
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{#each filteredProducts as product}
-						<div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+					{#each filteredProducts as product, i}
+						<div
+							class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300"
+							in:fly={{ y: 50, duration: 800, delay: i * 150 }}
+							out:scale={{ duration: 300 }}
+						>
 							<figure class="px-4 pt-4">
 								<img
 									src={product.image || '/placeholder.png'}
