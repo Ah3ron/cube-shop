@@ -14,6 +14,7 @@ func main() {
 	// Initialize app
 	app := fiber.New(fiber.Config{
 		EnableTrustedProxyCheck: true,
+		DisableStartupMessage:   false,
 	})
 
 	// Middleware

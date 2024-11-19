@@ -3,10 +3,10 @@ package routes
 import (
 	"cube-shop/handlers"
 	"cube-shop/middleware"
-	"os"
-	"path/filepath"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
 )
 
 func SetupRoutes(app *fiber.App) {
@@ -30,18 +30,12 @@ func SetupRoutes(app *fiber.App) {
 	products.Put("/:id", handlers.UpdateProduct)
 	products.Delete("/:id", handlers.DeleteProduct)
 
-	// Static file serving
-	app.Static("/", "./build")
+	// Serve static files from the build directory
+	app.Use("/", filesystem.New(filesystem.Config{
+		Root:         http.Dir("build"),
+		Browse:       true,
+		Index:        "index.html",
+		NotFoundFile: "index.html", // Important for SPA routing
+	}))
 
-	// SPA fallback route
-	app.Get("/*", func(c *fiber.Ctx) error {
-		path := c.Path()
-		fullPath := filepath.Join("./build", path)
-
-		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-			return c.SendFile("./build/index.html")
-		}
-
-		return c.Next()
-	})
 }
