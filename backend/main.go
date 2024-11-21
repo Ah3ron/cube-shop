@@ -6,9 +6,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"runtime"
 	"strings"
 	"time"
 
@@ -22,9 +19,6 @@ import (
 )
 
 func main() {
-	// Set maximum CPU cores to use
-	runtime.GOMAXPROCS(runtime.NumCPU())
-
 	// Initialize app with optimized config
 	app := fiber.New(fiber.Config{
 		EnableTrustedProxyCheck: true,
@@ -36,7 +30,6 @@ func main() {
 		IdleTimeout:             120 * time.Second,
 		DisableStartupMessage:   true,
 		ReduceMemoryUsage:       true,
-		Concurrency:             256 * 1024,
 		JSONEncoder:             json.Marshal,
 		JSONDecoder:             json.Unmarshal,
 	})
@@ -102,14 +95,6 @@ func main() {
 	routes.SetupRoutes(app)
 
 	// Graceful shutdown
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	go func() {
-		<-c
-		log.Println("Gracefully shutting down...")
-		_ = app.Shutdown()
-	}()
-
 	if err := app.Listen(":8080"); err != nil && err != http.ErrServerClosed {
 		log.Fatal(err)
 	}
