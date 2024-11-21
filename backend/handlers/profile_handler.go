@@ -9,11 +9,6 @@ import (
 )
 
 func GetProfile(c *fiber.Ctx) error {
-	// Set cache control headers to prevent caching
-	c.Set("Cache-Control", "no-store, no-cache, must-revalidate")
-	c.Set("Pragma", "no-cache")
-	c.Set("Expires", "0")
-
 	// Get user claims from JWT token
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)

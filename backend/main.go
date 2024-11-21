@@ -4,6 +4,7 @@ import (
 	"cube-shop/database"
 	"cube-shop/routes"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -28,7 +29,9 @@ func main() {
 	}))
 	app.Use(cache.New(cache.Config{
 		Next: func(c *fiber.Ctx) bool {
-			return c.Query("noCache") == "true"
+			path := c.Path()
+			isStaticAsset := strings.HasSuffix(path, ".css") || strings.HasSuffix(path, ".js")
+			return !isStaticAsset || c.Query("noCache") == "true"
 		},
 		Expiration:   30 * time.Minute,
 		CacheControl: true,
