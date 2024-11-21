@@ -12,7 +12,7 @@ func SeedData() {
 			Category:    "3x3",
 			Difficulty:  "Medium",
 			Brand:       "SpeedCube",
-			ImageURL:    "/images/classic-3x3.png",
+			ImageURL:    "https://placehold.co/400/141414/FFFFFF/png",
 		},
 		{
 			Name:        "Pro 4x4",
@@ -22,7 +22,7 @@ func SeedData() {
 			Category:    "4x4",
 			Difficulty:  "Hard",
 			Brand:       "SpeedCube",
-			ImageURL:    "/images/pro-4x4.png",
+			ImageURL:    "https://placehold.co/400/141414/FFFFFF/png",
 		},
 		{
 			Name:        "Beginner 2x2",
@@ -32,7 +32,7 @@ func SeedData() {
 			Category:    "2x2",
 			Difficulty:  "Easy",
 			Brand:       "CubeMaster",
-			ImageURL:    "/images/beginner-2x2.png",
+			ImageURL:    "https://placehold.co/400/141414/FFFFFF/png",
 		},
 		{
 			Name:        "Pyramid Cube",
@@ -42,7 +42,7 @@ func SeedData() {
 			Category:    "Special",
 			Difficulty:  "Medium",
 			Brand:       "PuzzlePro",
-			ImageURL:    "/images/pyramid.png",
+			ImageURL:    "https://placehold.co/400/141414/FFFFFF/png",
 		},
 		{
 			Name:        "Mirror Cube",
@@ -52,7 +52,7 @@ func SeedData() {
 			Category:    "Special",
 			Difficulty:  "Hard",
 			Brand:       "CubeMaster",
-			ImageURL:    "/images/mirror.png",
+			ImageURL:    "https://placehold.co/400/141414/FFFFFF/png",
 		},
 	}
 

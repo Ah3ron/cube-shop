@@ -1,9 +1,11 @@
 <script>
 	import { fade, fly, scale } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import AddToCartButton from '$lib/AddToCartButton.svelte';
 
 	let products = [];
 	let loading = true;
+	let imgLoading = true;
 	let error = null;
 
 	// Filter states
@@ -58,11 +60,11 @@
 	});
 </script>
 
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-3 py-8">
 	<div class="flex flex-col md:flex-row gap-8">
 		<!-- Filters -->
-		<div class="w-full md:w-64 space-y-4" in:fly={{ x: -50, duration: 1000 }}>
-			<div class="card bg-base-100 shadow" in:scale={{ duration: 800, delay: 200 }}>
+		<div class="w-full md:w-64 space-y-4">
+			<div class="card bg-base-100 shadow">
 				<div class="card-body">
 					<h2 class="card-title">Filters</h2>
 
@@ -176,19 +178,30 @@
 							in:fly={{ y: 50, duration: 800, delay: i * 150 }}
 							out:scale={{ duration: 300 }}
 						>
-							<figure class="px-4 pt-4">
+							<figure class="px-4 pt-4 relative">
+								{#if imgLoading}
+									<div
+										class="absolute inset-0 flex items-center justify-center bg-base-200 rounded-xl"
+									>
+										<span class="loading loading-spinner loading-lg"></span>
+									</div>
+								{/if}
 								<img
-									src={product.image || '/placeholder.png'}
+									src={product.image_url || '/placeholder.png'}
 									alt={product.name}
-									class="rounded-xl h-48 w-full object-cover"
+									class="rounded-xl h-48 w-full object-cover transition-opacity duration-300"
+									class:opacity-0={imgLoading}
+									class:opacity-100={!imgLoading}
+									on:load={() => (imgLoading = false)}
 								/>
 							</figure>
+
 							<div class="card-body">
 								<h2 class="card-title">{product.name}</h2>
 								<p class="text-sm opacity-70">{product.description}</p>
-								<div class="flex justify-between items-center mt-4">
+								<div class="flex justify-between items-center mt-4 gap-3 flex-wrap">
 									<span class="text-xl font-bold">${product.price}</span>
-									<button class="btn btn-primary">Add to Cart</button>
+									<AddToCartButton {product} />
 								</div>
 							</div>
 						</div>

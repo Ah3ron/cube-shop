@@ -20,9 +20,9 @@
 
 			const response = await fetch('/api/profile', {
 				headers: {
-					'Authorization': `Bearer ${token}`,
+					Authorization: `Bearer ${token}`,
 					'Cache-Control': 'no-cache',
-					'Pragma': 'no-cache'
+					Pragma: 'no-cache'
 				}
 			});
 

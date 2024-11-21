@@ -51,7 +51,7 @@ func setupProtectedRoutes(api fiber.Router) {
 	cart := protected.Group("/cart")
 	cart.Get("/", handlers.GetCart)
 	cart.Post("/", handlers.AddToCart)
-	cart.Put("/:id", handlers.UpdateCartItem)
+	cart.Patch("/:id", handlers.UpdateCartItem)
 	cart.Delete("/:id", handlers.RemoveFromCart)
 }
 
