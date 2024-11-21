@@ -20,7 +20,7 @@ func Connect() {
 	}
 
 	DB = db
-	db.AutoMigrate(&models.User{}, &models.Product{}, &models.Order{})
+	db.AutoMigrate(&models.User{}, &models.Product{}, &models.Order{}, &models.CartItem{})
 
 	var count int64
 	DB.Model(&models.Product{}).Count(&count)

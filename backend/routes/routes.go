@@ -13,29 +13,53 @@ func SetupRoutes(app *fiber.App) {
 	// API routes group
 	api := app.Group("/api")
 
+	// Public routes
+	setupPublicRoutes(api)
+
+	// Protected routes
+	setupProtectedRoutes(api)
+
+	// Static files serving
+	setupStaticFiles(app)
+}
+
+func setupPublicRoutes(api fiber.Router) {
 	// Auth routes
 	auth := api.Group("/auth")
 	auth.Post("/register", handlers.Register)
 	auth.Post("/login", handlers.Login)
 
-	// Unprotected routes
+	// Public product routes
 	api.Get("/products", handlers.GetProducts)
+}
 
-	// Protected API routes
+func setupProtectedRoutes(api fiber.Router) {
+	// Protected routes group
 	protected := api.Group("/", middleware.Protected())
+
+	// User routes
 	protected.Get("/profile", handlers.GetProfile)
+
+	// Product management routes
 	products := protected.Group("/products")
 	products.Post("/", handlers.CreateProduct)
 	products.Get("/:id", handlers.GetProduct)
 	products.Put("/:id", handlers.UpdateProduct)
 	products.Delete("/:id", handlers.DeleteProduct)
 
-	// Serve static files from the build directory
+	// Cart routes
+	cart := protected.Group("/cart")
+	cart.Get("/", handlers.GetCart)
+	cart.Post("/", handlers.AddToCart)
+	cart.Put("/:id", handlers.UpdateCartItem)
+	cart.Delete("/:id", handlers.RemoveFromCart)
+}
+
+func setupStaticFiles(app *fiber.App) {
 	app.Use("/", filesystem.New(filesystem.Config{
 		Root:         http.Dir("build"),
 		Browse:       true,
 		Index:        "index.html",
 		NotFoundFile: "index.html", // Important for SPA routing
 	}))
-
 }
