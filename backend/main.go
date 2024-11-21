@@ -43,12 +43,7 @@ func main() {
 	}))
 
 	// CORS with optimized settings
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
-		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
-		MaxAge:       3600,
-	}))
+	app.Use(cors.New())
 
 	// Compression with enhanced settings
 	app.Use(compress.New(compress.Config{

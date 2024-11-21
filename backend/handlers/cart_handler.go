@@ -5,7 +5,7 @@ import (
 	"cube-shop/models"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func GetCart(c *fiber.Ctx) error {
