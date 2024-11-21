@@ -22,7 +22,6 @@ func main() {
 	// Initialize app with optimized config
 	app := fiber.New(fiber.Config{
 		EnableTrustedProxyCheck: true,
-		Prefork:                 true,
 		ServerHeader:            "Fiber",
 		BodyLimit:               10 * 1024 * 1024,
 		ReadTimeout:             5 * time.Second,
