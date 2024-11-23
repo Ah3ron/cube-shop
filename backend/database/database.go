@@ -23,9 +23,10 @@ func Connect() {
 	db.AutoMigrate(
 		&models.User{},
 		&models.Product{},
+		&models.CartItem{},
 		&models.Order{},
 		&models.OrderItem{},
-		&models.CartItem{},
+		&models.ShippingDetails{},
 	)
 
 	var count int64

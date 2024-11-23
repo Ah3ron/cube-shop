@@ -7,86 +7,159 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
 )
 
+// GetOrders retrieves all orders for the authenticated user
 func GetOrders(c *fiber.Ctx) error {
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := uint(claims["user_id"].(float64))
+
 	var orders []models.Order
-	result := database.DB.Preload("OrderItem").Find(&orders)
+	result := database.DB.
+		Preload("ShippingDetails").
+		Preload("OrderItems").
+		Preload("OrderItems.Product").
+		Where("user_id = ?", userID).
+		Order("created_at DESC").
+		Find(&orders)
+
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Could not fetch orders",
+			"error": "Failed to fetch orders",
 		})
 	}
+
 	return c.JSON(orders)
 }
 
-func GetOrder(c *fiber.Ctx) error {
-	id := c.Params("id")
+// GetOrderByID retrieves a specific order by ID
+func GetOrderByID(c *fiber.Ctx) error {
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := uint(claims["user_id"].(float64))
+
+	orderID := c.Params("id")
+
 	var order models.Order
-	result := database.DB.Preload("OrderItem").First(&order, id)
+	result := database.DB.
+		Preload("ShippingDetails").
+		Preload("OrderItems").
+		Preload("OrderItems.Product").
+		Where("id = ? AND user_id = ?", orderID, userID).
+		First(&order)
+
 	if result.Error != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": "Order not found",
 		})
 	}
+
 	return c.JSON(order)
 }
 
-func CreateOrder(c *fiber.Ctx) error {
-	// Parse the order request
-	type OrderRequest struct {
-		ProductID uint `json:"product_id"`
-		Quantity  int  `json:"quantity"`
+// UpdateOrderStatus updates the status of an order
+func UpdateOrderStatus(c *fiber.Ctx) error {
+	type UpdateStatusRequest struct {
+		Status string `json:"status"`
 	}
 
-	var orderReq OrderRequest
-	if err := c.BodyParser(&orderReq); err != nil {
+	var req UpdateStatusRequest
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Cannot parse JSON",
+			"error": "Invalid request body",
 		})
 	}
 
-	// Get product to calculate total
-	var product models.Product
-	if err := database.DB.First(&product, orderReq.ProductID).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Product not found",
+	orderID := c.Params("id")
+
+	var order models.Order
+	result := database.DB.First(&order, orderID)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Order not found",
 		})
 	}
 
-	// Create the order
-	order := models.Order{
-		UserID:     c.Locals("user").(*jwt.Token).Claims.(jwt.MapClaims)["user_id"].(uint),
-		Status:     "pending",
-		OrderDate:  time.Now(),
-		TotalPrice: float64(orderReq.Quantity) * product.Price,
+	// Update status
+	order.Status = req.Status
+	order.UpdatedAt = time.Now()
+
+	if err := database.DB.Save(&order).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to update order status",
+		})
 	}
 
-	// Start transaction
+	return c.JSON(order)
+}
+
+// CancelOrder cancels an order
+func CancelOrder(c *fiber.Ctx) error {
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := uint(claims["user_id"].(float64))
+
+	orderID := c.Params("id")
+
 	tx := database.DB.Begin()
 
-	if err := tx.Create(&order).Error; err != nil {
+	var order models.Order
+	if err := tx.Where("id = ? AND user_id = ?", orderID, userID).First(&order).Error; err != nil {
 		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Could not create order",
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Order not found",
 		})
 	}
 
-	// Create order item
-	orderItem := models.OrderItem{
-		OrderID:   order.ID,
-		ProductID: orderReq.ProductID,
-		Quantity:  orderReq.Quantity,
-		Price:     product.Price,
-	}
-
-	if err := tx.Create(&orderItem).Error; err != nil {
+	if order.Status != "pending" {
 		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Could not create order item",
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Only pending orders can be cancelled",
 		})
 	}
 
-	tx.Commit()
-	return c.Status(fiber.StatusCreated).JSON(order)
+	// Update order status
+	order.Status = "cancelled"
+	order.UpdatedAt = time.Now()
+
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to cancel order",
+		})
+	}
+
+	// Restore product stock
+	var orderItems []models.OrderItem
+	if err := tx.Where("order_id = ?", orderID).Find(&orderItems).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch order items",
+		})
+	}
+
+	for _, item := range orderItems {
+		if err := tx.Model(&models.Product{}).
+			Where("id = ?", item.ProductID).
+			UpdateColumn("stock", gorm.Expr("stock + ?", item.Quantity)).
+			Error; err != nil {
+			tx.Rollback()
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to restore product stock",
+			})
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to complete order cancellation",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Order cancelled successfully",
+		"order":   order,
+	})
 }
