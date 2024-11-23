@@ -83,11 +83,11 @@
 							</div>
 							<div
 								class="badge badge-lg"
-								class:badge-success={order.Status === 'completed'}
-								class:badge-warning={order.Status === 'pending'}
-								class:badge-error={order.Status === 'cancelled'}
+								class:badge-success={order.status === 'completed'}
+								class:badge-warning={order.status === 'pending'}
+								class:badge-error={order.status === 'cancelled'}
 							>
-								{order.Status}
+								{order.status}
 							</div>
 						</div>
 
