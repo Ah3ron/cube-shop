@@ -9,7 +9,29 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type CheckoutRequest struct {
+	Items []struct {
+		ID       uint    `json:"id"`
+		Quantity int     `json:"quantity"`
+		Price    float64 `json:"price"`
+		Product  struct {
+			ID    uint    `json:"id"`
+			Name  string  `json:"name"`
+			Price float64 `json:"price"`
+		} `json:"product"`
+	} `json:"items"`
+	Total float64 `json:"total"`
+}
+
 func Checkout(c *fiber.Ctx) error {
+	// Parse request body
+	var req CheckoutRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
 	// Get user ID from JWT token
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
@@ -18,28 +40,12 @@ func Checkout(c *fiber.Ctx) error {
 	// Start a database transaction
 	tx := database.DB.Begin()
 
-	// Get all cart items for the user
-	var cartItems []models.CartItem
-	if err := tx.Where("user_id = ?", userID).Find(&cartItems).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Could not retrieve cart items",
-		})
-	}
-
-	if len(cartItems) == 0 {
-		tx.Rollback()
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Cart is empty",
-		})
-	}
-
 	// Create order
 	order := models.Order{
 		UserID:     userID,
 		Status:     "pending",
 		OrderDate:  time.Now(),
-		TotalPrice: 0,
+		TotalPrice: req.Total,
 	}
 
 	if err := tx.Create(&order).Error; err != nil {
@@ -49,41 +55,21 @@ func Checkout(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create order items and calculate total
-	var totalPrice float64 = 0
-	for _, cartItem := range cartItems {
-		var product models.Product
-		if err := tx.First(&product, cartItem.ProductID).Error; err != nil {
-			tx.Rollback()
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Could not find product",
-			})
-		}
-
+	// Create order items
+	for _, item := range req.Items {
 		orderItem := models.OrderItem{
 			OrderID:   order.ID,
-			ProductID: cartItem.ProductID,
-			Quantity:  cartItem.Quantity,
-			Price:     product.Price,
+			ProductID: item.Product.ID,
+			Quantity:  item.Quantity,
+			Price:     item.Product.Price,
 		}
 
 		if err := tx.Create(&orderItem).Error; err != nil {
 			tx.Rollback()
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Could not create order item",
+				"error": "Could not create order items",
 			})
 		}
-
-		totalPrice += product.Price * float64(cartItem.Quantity)
-	}
-
-	// Update order with total price
-	order.TotalPrice = totalPrice
-	if err := tx.Save(&order).Error; err != nil {
-		tx.Rollback()
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Could not update order total",
-		})
 	}
 
 	// Clear the user's cart

@@ -38,6 +38,9 @@ func setupProtectedRoutes(api fiber.Router) {
 	// Protected routes group
 	protected := api.Group("/", middleware.Protected())
 
+	// Checkout route
+	protected.Post("/checkout", handlers.Checkout)
+
 	// User routes
 	protected.Get("/profile", handlers.GetProfile)
 
@@ -53,7 +56,6 @@ func setupProtectedRoutes(api fiber.Router) {
 	cart.Post("/", handlers.AddToCart)
 	cart.Patch("/:id", handlers.UpdateCartItem)
 	cart.Delete("/:id", handlers.RemoveFromCart)
-	cart.Post("/checkout", handlers.Checkout)
 }
 
 func setupStaticFiles(app *fiber.App) {
