@@ -6,7 +6,7 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': {
-				target: 'https://cube-shop-production.up.railway.app/',
+				target: 'https://cube-shop.up.railway.app/',
 				changeOrigin: true
 			}
 		}

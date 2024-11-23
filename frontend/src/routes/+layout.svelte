@@ -158,7 +158,7 @@
 	</header>
 
 	<!-- Main content -->
-	<main class="flex-grow pt-16">
+	<main class="flex-grow pt-16 bg-base-200">
 		{@render children()}
 	</main>
 

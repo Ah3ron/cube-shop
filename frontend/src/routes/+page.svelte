@@ -99,7 +99,7 @@
 		</div>
 	</div>
 
-	<div class="container mx-auto px-4 py-16" in:fade={{ duration: 600, delay: 1000 }}>
+	<div class="bg-base-100 container w-full px-auto  py-16" in:fade={{ duration: 600, delay: 1000 }}>
 		<div class="flex flex-col md:flex-row items-center place-content-between gap-8">
 			<div class="flex-1 max-w-[50%]" in:fly={{ x: -30, duration: 600, delay: 1100 }}>
 				<h2 class="text-3xl font-bold mb-4">Join Our Community</h2>
