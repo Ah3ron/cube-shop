@@ -25,7 +25,6 @@
 			}
 
 			orders = await response.json();
-			console.log(orders);
 		} catch (err) {
 			error = err.message;
 		} finally {
@@ -42,7 +41,7 @@
 	}
 </script>
 
-<div class="container mx-auto px-4 py-8 mt-16">
+<div class="container mx-auto px-4 py-8 mt-10">
 	<h1 class="text-3xl font-bold mb-8">My Orders</h1>
 
 	{#if loading}
@@ -77,20 +76,16 @@
 			{#each orders as order}
 				<div class="card bg-base-100 shadow-xl">
 					<div class="card-body">
-						<div
-							class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
-						>
+						<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
 							<div>
 								<h2 class="card-title">Order #{order.ID}</h2>
-								<p class="text-base-content/70">
-									Placed on {formatDate(order.CreatedAt)}
-								</p>
+								<p class="text-base-content/70">Placed on {formatDate(order.CreatedAt)}</p>
 							</div>
 							<div
 								class="badge badge-lg"
-								class:badge-success={order.status === 'completed'}
-								class:badge-warning={order.status === 'pending'}
-								class:badge-error={order.status === 'cancelled'}
+								class:badge-success={order.Status === 'completed'}
+								class:badge-warning={order.Status === 'pending'}
+								class:badge-error={order.Status === 'cancelled'}
 							>
 								{order.Status}
 							</div>
@@ -101,7 +96,7 @@
 						<div class="space-y-4">
 							{#each order.order_items as item}
 								<div class="flex justify-between w-full items-center">
-									<div class="flex items-center gap-4">
+									<div class="flex items-center gap-4 w-full">
 										<img
 											src={item.product.image_url}
 											alt={item.product.name}
@@ -109,25 +104,20 @@
 										/>
 										<div>
 											<h3 class="font-medium">{item.product.name}</h3>
-											<p class="text-sm text-base-content/70">
-												Quantity: {item.quantity}
-											</p>
+											<p class="text-sm text-base-content/70">Quantity: {item.quantity}</p>
 										</div>
 									</div>
-									<p class="font-medium">
-										${(item.price * item.quantity).toFixed(2)}
-									</p>
+									<p class="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
 								</div>
 							{/each}
 						</div>
 
 						<div class="divider"></div>
 
-						<!-- Replace the existing shipping details section with this: -->
 						<div class="flex flex-col md:flex-row justify-between gap-4">
 							<div>
 								<h3 class="font-medium mb-2">Shipping Details</h3>
-								{#if order.shipping_details.name}
+								{#if order.shipping_details?.name}
 									<p class="text-sm">{order.shipping_details.name}</p>
 									<p class="text-sm">{order.shipping_details.email}</p>
 									<p class="text-sm">{order.shipping_details.address}</p>
