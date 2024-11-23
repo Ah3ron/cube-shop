@@ -10,20 +10,23 @@
 	let activeTab = 'description';
 
 	async function fetchProduct() {
-		try {
-			const response = await fetch(`/api/products/${window.location.pathname.split('/')[2]}`);
+    try {
+        const url = new URL(window.location.href);
+        const productId = url.searchParams.get('id');
+		
+        const response = await fetch(`/api/products/${productId}`);
 
-			if (!response.ok) {
-				throw new Error('Product not found');
-			}
+        if (!response.ok) {
+            throw new Error('Product not found');
+        }
 
-			product = await response.json();
-		} catch (err) {
-			error = err.message;
-		} finally {
-			loading = false;
-		}
-	}
+        product = await response.json();
+    } catch (err) {
+        error = err.message;
+    } finally {
+        loading = false;
+    }
+}
 
 	onMount(async () => {
 		fetchProduct();

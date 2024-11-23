@@ -195,7 +195,7 @@
 			{:else}
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{#each filteredProducts as product, i}
-						<a href={`/product/${product.ID}`} class="block">
+						<a href={`/product/?id=${product.ID}`} class="block">
 							<div
 								class="card bg-base-100 shadow-xl hover:shadow-2xl hover:scale-1 transition-all duration-300"
 								in:fly={{ y: 50, duration: 800, delay: i * 150 }}
