@@ -56,7 +56,7 @@
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 			{#each Array(3) as _, i}
 				<div
-					class="card bg-base-200 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+					class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
 					in:fly={{ x: -30, duration: 500, delay: 400 + i * 100 }}
 				>
 					<div class="card-body">
@@ -99,26 +99,28 @@
 		</div>
 	</div>
 
-	<div class="bg-base-100 container w-full px-auto py-16" in:fade={{ duration: 600, delay: 1000 }}>
-		<div class="flex flex-col md:flex-row items-center place-content-between gap-8">
-			<div class="flex-1 max-w-[50%]" in:fly={{ x: -30, duration: 600, delay: 1100 }}>
-				<h2 class="text-3xl font-bold mb-4">Join Our Community</h2>
-				<p class="mb-4">
-					Connect with fellow cube enthusiasts, share your achievements, and learn new techniques.
-				</p>
-				<button class="btn btn-primary hover:scale-105 transition-transform duration-200">
-					Sign Up Now
-				</button>
-			</div>
-			<div class="flex-1 max-w-min" in:fly={{ x: 30, duration: 600, delay: 1200 }}>
-				<div class="bg-base-300 stats shadow hover:shadow-xl transition-all duration-300">
-					<div class="stat">
-						<div class="stat-title">Happy Customers</div>
-						<div class="stat-value">10K+</div>
-					</div>
-					<div class="stat">
-						<div class="stat-title">Products</div>
-						<div class="stat-value">500+</div>
+	<div class="bg-base-100 py-16" in:fade={{ duration: 600, delay: 1000 }}>
+		<div class="container mx-auto px-4">
+			<div class="flex flex-col md:flex-row items-center place-content-between gap-8">
+				<div class="flex-1" in:fly={{ x: -30, duration: 600, delay: 1100 }}>
+					<h2 class="text-3xl font-bold mb-4">Join Our Community</h2>
+					<p class="mb-4">
+						Connect with fellow cube enthusiasts, share your achievements, and learn new techniques.
+					</p>
+					<button class="btn btn-primary hover:scale-105 transition-transform duration-200">
+						Sign Up Now
+					</button>
+				</div>
+				<div class="flex-1 max-w-min" in:fly={{ x: 30, duration: 600, delay: 1200 }}>
+					<div class="bg-base-300 stats shadow hover:shadow-xl transition-all duration-300">
+						<div class="stat">
+							<div class="stat-title">Happy Customers</div>
+							<div class="stat-value">10K+</div>
+						</div>
+						<div class="stat">
+							<div class="stat-title">Products</div>
+							<div class="stat-value">500+</div>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -195,44 +195,45 @@
 			{:else}
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{#each filteredProducts as product, i}
-						<div
-							class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300"
-							in:fly={{ y: 50, duration: 800, delay: i * 150 }}
-							out:scale={{ duration: 300 }}
-						>
-							<figure class="px-4 pt-4 relative">
-								{#if imgLoading}
-									<div
-										class="absolute inset-0 flex items-center justify-center bg-base-200 rounded-xl"
-									>
-										<span class="loading loading-spinner loading-lg"></span>
+						<a href={`/product/${product.ID}`} class="block">
+							<div
+								class="card bg-base-100 shadow-xl hover:shadow-2xl hover:scale-1 transition-all duration-300"
+								in:fly={{ y: 50, duration: 800, delay: i * 150 }}
+								out:scale={{ duration: 300 }}
+							>
+								<figure class="px-4 pt-4 relative">
+									{#if imgLoading}
+										<div
+											class="absolute inset-0 flex items-center justify-center bg-base-200 rounded-xl"
+										>
+											<span class="loading loading-spinner loading-lg"></span>
+										</div>
+									{/if}
+									<img
+										src={product.image_url || '/placeholder.png'}
+										alt={product.name}
+										class="rounded-xl h-48 w-full object-cover transition-opacity duration-300"
+										class:opacity-0={imgLoading}
+										class:opacity-100={!imgLoading}
+										on:load={() => (imgLoading = false)}
+									/>
+								</figure>
+								<div class="card-body">
+									<h2 class="card-title">{product.name}</h2>
+									<div class="flex flex-wrap gap-2 mb-2 w-2/3">
+										<div class="badge badge-primary">{product.category}</div>
+										<div class="badge badge-outline badge-secondary">{product.difficulty}</div>
+										<div class="badge badge-outline badge-accent">{product.brand}</div>
+										<div class="badge badge-outline badge-ghost">Stock: {product.stock}</div>
 									</div>
-								{/if}
-								<img
-									src={product.image_url || '/placeholder.png'}
-									alt={product.name}
-									class="rounded-xl h-48 w-full object-cover transition-opacity duration-300"
-									class:opacity-0={imgLoading}
-									class:opacity-100={!imgLoading}
-									on:load={() => (imgLoading = false)}
-								/>
-							</figure>
-
-							<div class="card-body">
-								<h2 class="card-title">{product.name}</h2>
-								<div class="flex flex-wrap gap-2 mb-2 w-2/3">
-									<div class="badge badge-primary">{product.category}</div>
-									<div class="badge badge-outline badge-secondary">{product.difficulty}</div>
-									<div class="badge badge-outline badge-accent">{product.brand}</div>
-									<div class="badge badge-outline badge-ghost">Stock: {product.stock}</div>
-								</div>
-								<p class="text-sm opacity-70">{product.description}</p>
-								<div class="flex justify-between items-center mt-4 gap-3 flex-wrap">
-									<span class="text-xl font-bold">${product.price}</span>
-									<AddToCartButton {product} />
+									<p class="text-sm opacity-70">{product.description}</p>
+									<div class="flex justify-between items-center mt-4 gap-3 flex-wrap">
+										<span class="text-xl font-bold">${product.price}</span>
+										<AddToCartButton {product} />
+									</div>
 								</div>
 							</div>
-						</div>
+						</a>
 					{/each}
 				</div>
 			{/if}
