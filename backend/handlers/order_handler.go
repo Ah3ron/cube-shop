@@ -12,11 +12,15 @@ import (
 
 // GetOrders retrieves all orders for the authenticated user
 func GetOrders(c *fiber.Ctx) error {
+	// Extract user ID from JWT token
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	userID := uint(claims["user_id"].(float64))
 
+	// Initialize orders slice
 	var orders []models.Order
+
+	// Query the database with preloaded relationships
 	result := database.DB.
 		Preload("ShippingDetails").
 		Preload("OrderItems").
@@ -25,12 +29,14 @@ func GetOrders(c *fiber.Ctx) error {
 		Order("created_at DESC").
 		Find(&orders)
 
+	// Handle potential errors
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to fetch orders",
 		})
 	}
 
+	// Return the orders as JSON
 	return c.JSON(orders)
 }
 
