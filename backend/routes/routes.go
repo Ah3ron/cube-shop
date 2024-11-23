@@ -53,6 +53,7 @@ func setupProtectedRoutes(api fiber.Router) {
 	cart.Post("/", handlers.AddToCart)
 	cart.Patch("/:id", handlers.UpdateCartItem)
 	cart.Delete("/:id", handlers.RemoveFromCart)
+	cart.Post("/checkout", handlers.Checkout)
 }
 
 func setupStaticFiles(app *fiber.App) {
