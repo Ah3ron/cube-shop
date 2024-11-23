@@ -5,33 +5,6 @@
 	let loading = true;
 	let error = null;
 
-	async function handleCheckout() {
-		const token = localStorage.getItem('token');
-		if (!token) {
-			window.location.href = '/auth/login';
-			return;
-		}
-
-		try {
-			const response = await fetch('/api/orders', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`
-				},
-				body: JSON.stringify({
-					items: $cart,
-					total: $cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-				})
-			});
-
-			if (!response.ok) throw new Error('Checkout failed');
-			window.location.href = '/orders';
-		} catch (err) {
-			error = err.message;
-		}
-	}
-
 	onMount(async () => {
 		try {
 			await cart.fetch();
@@ -119,9 +92,7 @@
 								.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 								.toFixed(2)}
 						</div>
-						<button class="btn btn-primary mt-4" on:click={handleCheckout}>
-							Proceed to Checkout
-						</button>
+						<a class="btn btn-primary mt-4" href="/checkout"> Proceed to Checkout </a>
 					</div>
 				</div>
 			</div>
