@@ -31,6 +31,7 @@ func setupPublicRoutes(api fiber.Router) {
 
 	// Public product routes
 	api.Get("/products", handlers.GetProducts)
+	api.Get("/products/:id", handlers.GetProduct)
 }
 
 func setupProtectedRoutes(api fiber.Router) {
@@ -43,7 +44,6 @@ func setupProtectedRoutes(api fiber.Router) {
 	// Product management routes
 	products := protected.Group("/products")
 	products.Post("/", handlers.CreateProduct)
-	products.Get("/:id", handlers.GetProduct)
 	products.Put("/:id", handlers.UpdateProduct)
 	products.Delete("/:id", handlers.DeleteProduct)
 
