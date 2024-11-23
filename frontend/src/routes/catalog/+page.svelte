@@ -7,13 +7,14 @@
 	let loading = true;
 	let imgLoading = true;
 	let error = null;
+	let debounceTimer;
 
 	// Filter states
 	let filters = {
 		category: '',
 		difficulty: '',
 		brand: '',
-		price: { min: 0, max: 100 },
+		price: { min: 0, max: 0 },
 		inStock: false
 	};
 
@@ -28,7 +29,15 @@
 			categories = new Set(products.map((p) => p.category));
 			difficulties = new Set(products.map((p) => p.difficulty));
 			brands = new Set(products.map((p) => p.brand));
+			filters.price.max = Math.max(...products.map((p) => p.price));
 		}
+	}
+
+	function debouncePriceUpdate(value, type) {
+		clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(() => {
+			filters.price[type] = value;
+		}, 300);
 	}
 
 	onMount(async () => {
@@ -108,14 +117,27 @@
 							<input
 								type="number"
 								class="input input-bordered w-full"
-								bind:value={filters.price.min}
+								value={filters.price.min}
 								min="0"
+								on:input={(e) => {
+									if (e.target.value < 0) e.target.value = 0;
+									if (e.target.value > filters.price.max) {
+										filters.price.max = Number(e.target.value);
+									}
+									debouncePriceUpdate(Number(e.target.value), 'min');
+								}}
 							/>
 							<input
 								type="number"
 								class="input input-bordered w-full"
-								bind:value={filters.price.max}
-								min="0"
+								value={filters.price.max}
+								min={filters.price.min}
+								on:input={(e) => {
+									if (e.target.value < filters.price.min) {
+										e.target.value = filters.price.min;
+									}
+									debouncePriceUpdate(Number(e.target.value), 'max');
+								}}
 							/>
 						</div>
 					</div>
@@ -134,7 +156,7 @@
 								category: '',
 								difficulty: '',
 								brand: '',
-								price: { min: 0, max: 100 },
+								price: { min: 0, max: Math.max(...products.map((p) => p.price)) },
 								inStock: false
 							};
 						}}
