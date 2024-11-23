@@ -62,7 +62,7 @@
 			(!filters.category || p.category === filters.category) &&
 			(!filters.difficulty || p.difficulty === filters.difficulty) &&
 			(!filters.brand || p.brand === filters.brand) &&
-			(!filters.inStock || p.inStock) &&
+			(!filters.inStock || p.stock > 0) &&
 			p.price >= filters.price.min &&
 			p.price <= filters.price.max
 		);
@@ -220,6 +220,12 @@
 
 							<div class="card-body">
 								<h2 class="card-title">{product.name}</h2>
+								<div class="flex flex-wrap gap-2 mb-2 w-2/3">
+									<div class="badge badge-primary">{product.category}</div>
+									<div class="badge badge-outline badge-secondary">{product.difficulty}</div>
+									<div class="badge badge-outline badge-accent">{product.brand}</div>
+									<div class="badge badge-outline badge-ghost">Stock: {product.stock}</div>
+								</div>
 								<p class="text-sm opacity-70">{product.description}</p>
 								<div class="flex justify-between items-center mt-4 gap-3 flex-wrap">
 									<span class="text-xl font-bold">${product.price}</span>
