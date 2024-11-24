@@ -1,6 +1,7 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import { productsApi } from '$lib/api/products';
 	import AddToCartButton from '$lib/AddToCartButton.svelte';
 
 	let product = null;
@@ -13,14 +14,7 @@
 		try {
 			const url = new URL(window.location.href);
 			const productId = url.searchParams.get('id');
-
-			const response = await fetch(`/api/products/${productId}`);
-
-			if (!response.ok) {
-				throw new Error('Product not found');
-			}
-
-			product = await response.json();
+			product = await productsApi.getById(productId);
 		} catch (err) {
 			error = err.message;
 		} finally {
@@ -28,9 +22,7 @@
 		}
 	}
 
-	onMount(async () => {
-		fetchProduct();
-	});
+	onMount(fetchProduct);
 </script>
 
 <div class="container mx-auto px-4 mt-16">

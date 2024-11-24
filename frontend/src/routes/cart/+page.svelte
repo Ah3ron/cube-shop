@@ -1,13 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
 	import { cart } from '$lib/stores/cart';
+	import { cartApi } from '$lib/api/cart';
 
 	let loading = true;
 	let error = null;
 
 	onMount(async () => {
 		try {
-			await cart.fetch();
+			await cartApi.get();
 		} finally {
 			loading = false;
 		}

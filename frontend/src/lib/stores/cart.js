@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import { cartApi } from '$lib/api/cart';
 
 function createCartStore() {
 	const { subscribe, set, update } = writable([]);
@@ -12,20 +13,7 @@ function createCartStore() {
 			if (!browser) return;
 
 			try {
-				const token = localStorage.getItem('token');
-				if (!token) {
-					set([]);
-					return;
-				}
-
-				const response = await fetch('/api/cart', {
-					headers: {
-						Authorization: `Bearer ${token}`
-					}
-				});
-
-				if (!response.ok) throw new Error('Failed to fetch cart');
-				const items = await response.json();
+				const items = await cartApi.get();
 				set(items.sort((a, b) => a.id - b.id));
 			} catch (err) {
 				console.error('Error fetching cart:', err);
@@ -36,17 +24,7 @@ function createCartStore() {
 			if (!browser) return;
 
 			try {
-				const token = localStorage.getItem('token');
-				if (!token) return;
-
-				const response = await fetch(`/api/cart/${itemId}`, {
-					method: 'DELETE',
-					headers: {
-						Authorization: `Bearer ${token}`
-					}
-				});
-
-				if (!response.ok) throw new Error('Failed to remove item');
+				await cartApi.remove(itemId);
 				await this.fetch();
 			} catch (err) {
 				console.error('Error removing item:', err);
@@ -56,19 +34,7 @@ function createCartStore() {
 			if (!browser) return;
 
 			try {
-				const token = localStorage.getItem('token');
-				if (!token) return;
-
-				const response = await fetch(`/api/cart/${itemId}`, {
-					method: 'PATCH',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${token}`
-					},
-					body: JSON.stringify({ quantity })
-				});
-
-				if (!response.ok) throw new Error('Failed to update quantity');
+				await cartApi.update(itemId, quantity);
 				await this.fetch();
 			} catch (err) {
 				console.error('Error updating quantity:', err);

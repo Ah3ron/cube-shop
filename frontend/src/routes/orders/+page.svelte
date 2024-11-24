@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { ordersApi } from '$lib/api/orders';
 
 	let orders = [];
 	let loading = true;
@@ -7,24 +8,7 @@
 
 	onMount(async () => {
 		try {
-			const token = localStorage.getItem('token');
-			if (!token) {
-				window.location.href = '/auth/login';
-				return;
-			}
-
-			const response = await fetch('/api/orders', {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
-
-			if (!response.ok) {
-				throw new Error('Failed to fetch orders');
-			}
-
-			orders = await response.json();
+			orders = await ordersApi.getAll();
 		} catch (err) {
 			error = err.message;
 		} finally {

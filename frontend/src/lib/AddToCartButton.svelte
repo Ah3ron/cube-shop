@@ -1,5 +1,6 @@
 <script>
 	import { cart } from '$lib/stores/cart';
+	import { cartApi } from '$lib/api/cart';
 
 	export let product;
 	let loading = false;
@@ -7,29 +8,13 @@
 	async function handleAddToCart() {
 		loading = true;
 		try {
-			const token = localStorage.getItem('token');
-			const response = await fetch('/api/cart', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`
-				},
-				body: JSON.stringify({
-					product_id: product.ID,
-					quantity: 1
-				})
-			});
-
-			if (!response.ok) {
-				const error = await response.json();
-				throw new Error(error.error);
-			}
-
+			await cartApi.add(product.ID, 1);
 			await cart.fetch();
 		} catch (error) {
 			console.error('Failed to add to cart:', error);
+		} finally {
+			loading = false;
 		}
-		loading = false;
 	}
 </script>
 
