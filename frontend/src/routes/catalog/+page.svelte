@@ -1,7 +1,6 @@
 <script>
 	import { fade, fly, scale } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { productsApi } from '$lib/api/products';
 	import AddToCartButton from '$lib/AddToCartButton.svelte';
 
 	let products = [];
@@ -44,7 +43,13 @@
 	onMount(async () => {
 		loading = true;
 		try {
-			products = await productsApi.getAll();
+			const response = await fetch('/api/products');
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch products');
+			}
+
+			products = await response.json();
 		} catch (err) {
 			error = err.message;
 		} finally {

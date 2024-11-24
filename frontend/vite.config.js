@@ -7,8 +7,7 @@ export default defineConfig({
 		proxy: {
 			'/api': {
 				target: 'https://cube-shop.up.railway.app/',
-				changeOrigin: true,
-				secure: false
+				changeOrigin: true
 			}
 		}
 	},
@@ -25,14 +24,8 @@ export default defineConfig({
 		},
 		rollupOptions: {
 			output: {
-				manualChunks: (id) => {
-					if (id.includes('node_modules')) {
-						return 'vendor';
-					}
-				}
+				manualChunks: undefined
 			}
-		},
-		sourcemap: false,
-		target: 'esnext'
+		}
 	}
 });

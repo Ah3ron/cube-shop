@@ -1,6 +1,6 @@
 <script>
 	import { cart } from '$lib/stores/cart';
-	import { ordersApi } from '$lib/api/orders';
+	import { onMount } from 'svelte';
 
 	let loading = false;
 	let error = null;
@@ -21,6 +21,13 @@
 		error = null;
 
 		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				window.location.href = '/auth/login';
+				return;
+			}
+
+			// Create checkout request matching CheckoutRequest struct
 			const checkoutRequest = {
 				items: $cart.map((item) => ({
 					product_id: item.product.id,
@@ -28,16 +35,37 @@
 					product: item.product
 				})),
 				total: cartTotal,
-				shippingDetails: formData
+				shippingDetails: {
+					name: formData.name,
+					email: formData.email,
+					address: formData.address,
+					city: formData.city,
+					country: formData.country,
+					zipCode: formData.zipCode
+				}
 			};
 
-			await ordersApi.create(checkoutRequest);
+			const response = await fetch('/api/checkout', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				},
+				body: JSON.stringify(checkoutRequest)
+			});
+
+			if (!response.ok) {
+				const data = await response.json();
+				throw new Error(data.error || 'Checkout failed');
+			}
+
+			// Clear cart and redirect
 			cart.set([]);
 			window.location.href = '/orders';
 		} catch (err) {
 			error = err.message;
 		} finally {
-				loading = false;
+			loading = false;
 		}
 	}
 	function validateZipCode(event) {
