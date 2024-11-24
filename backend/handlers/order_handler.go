@@ -10,8 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
-// GetOrders retrieves all orders for the authenticated user
-func GetOrders(c *fiber.Ctx) error {
+func GetAllOrders(c *fiber.Ctx) error {
+	var orders []models.Order
+	result := database.DB.Preload("OrderItems.Product").Preload("ShippingDetails").Find(&orders)
+	if result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Failed to fetch orders"})
+	}
+	return c.JSON(orders)
+}
+
+// GetOrdersByUser retrieves all orders for the authenticated user
+func GetOrdersByUser(c *fiber.Ctx) error {
 	// Extract user ID from JWT token
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)

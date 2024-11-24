@@ -59,10 +59,29 @@ func setupProtectedRoutes(api fiber.Router) {
 
 	// Order routes
 	orders := protected.Group("/orders")
-	orders.Get("/", handlers.GetOrders)
+	orders.Get("/", handlers.GetOrdersByUser)
 	orders.Get("/:id", handlers.GetOrderByID)
 	orders.Put("/:id/status", handlers.UpdateOrderStatus)
 	orders.Put("/:id/cancel", handlers.CancelOrder)
+
+	admin := protected.Group("/admin", middleware.RequireRole("admin"))
+
+	// Order Management
+	admin.Get("/orders", handlers.GetAllOrders)
+	admin.Get("/orders/:id", handlers.GetOrderByID)
+	admin.Put("/orders/:id/status", handlers.UpdateOrderStatus)
+
+	// Product Management
+	admin.Get("/products", handlers.GetProducts)
+	admin.Post("/products", handlers.CreateProduct)
+	admin.Put("/products/:id", handlers.UpdateProduct)
+	admin.Delete("/products/:id", handlers.DeleteProduct)
+
+	// User Management
+
+	admin.Get("/users", handlers.GetAllUsers)
+	admin.Get("/users/:id", handlers.GetUserByID)
+	admin.Put("/users/:id/role", handlers.UpdateUserRole)
 }
 
 func setupStaticFiles(app *fiber.App) {
