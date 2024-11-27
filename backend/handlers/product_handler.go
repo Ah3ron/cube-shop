@@ -3,6 +3,7 @@ package handlers
 import (
 	"cube-shop/database"
 	"cube-shop/models"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -68,15 +69,24 @@ func GetProduct(c *fiber.Ctx) error {
 // GetCategories возвращает список всех категорий
 func GetCategories(c *fiber.Ctx) error {
 	var categories []string
-	result := database.DB.Model(&models.Product{}).Distinct().Pluck("category", &categories)
-	
+
+	// Изменяем запрос для получения уникальных категорий
+	result := database.DB.Model(&models.Product{}).
+		Select("DISTINCT category").
+		Where("category IS NOT NULL AND category != ''").
+		Order("category ASC").
+		Pluck("category", &categories)
+
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Не удалось получить категории",
 		})
 	}
 
-	return c.JSON(categories)
+	// Возвращаем массив категорий в формате JSON
+	return c.JSON(fiber.Map{
+		"categories": categories,
+	})
 }
 
 // SearchProducts выполняет поиск по продуктам
@@ -90,7 +100,7 @@ func SearchProducts(c *fiber.Ctx) error {
 
 	var products []models.Product
 	searchQuery := "%" + query + "%"
-	
+
 	result := database.DB.Where(
 		"name ILIKE ? OR description ILIKE ? OR category ILIKE ? OR brand ILIKE ?",
 		searchQuery, searchQuery, searchQuery, searchQuery,
@@ -108,7 +118,7 @@ func SearchProducts(c *fiber.Ctx) error {
 // CreateProduct создает новый продукт (только для админов)
 func CreateProduct(c *fiber.Ctx) error {
 	product := new(models.Product)
-	
+
 	if err := c.BodyParser(product); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Неверный формат данных",
@@ -174,4 +184,4 @@ func DeleteProduct(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
-} 
+}
