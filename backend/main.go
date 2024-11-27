@@ -43,12 +43,14 @@ func main() {
 	}))
 
 	// CORS with optimized settings
+	// CORS with secure settings
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "*",
+		AllowOrigins:     "http://localhost:8080, https://cube-shop.up.railway.app/",
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		ExposeHeaders:    "Content-Length",
 		AllowCredentials: true,
+		MaxAge:           int((24 * time.Hour).Seconds()),
 	}))
 
 	// Compression with enhanced settings
