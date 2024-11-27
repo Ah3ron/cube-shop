@@ -59,7 +59,7 @@ func main() {
 			path := c.Path()
 			return strings.HasPrefix(path, "/api")
 		},
-		Expiration:           24 * time.Hour,
+		Expiration:           31536000 * time.Second,
 		CacheControl:         true,
 		StoreResponseHeaders: true,
 		KeyGenerator: func(c *fiber.Ctx) string {
