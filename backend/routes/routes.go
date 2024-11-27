@@ -73,7 +73,19 @@ func setupOrderRoutes(protected fiber.Router) {
 }
 
 func setupStaticFiles(app *fiber.App) {
-	app.Static("/", "./build")
+	app.Static("/", "./build", fiber.Static{
+		MaxAge: 86400,
+		Browse: false,
+		Next: func(c *fiber.Ctx) bool {
+			if strings.HasSuffix(c.Path(), ".js") {
+				c.Set("Content-Type", "application/javascript")
+			}
+			if strings.HasSuffix(c.Path(), ".mjs") {
+				c.Set("Content-Type", "application/javascript")
+			}
+			return false
+		},
+	})
 
 	app.Use(func(c *fiber.Ctx) error {
 		if strings.HasPrefix(c.Path(), "/api") {

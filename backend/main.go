@@ -67,6 +67,33 @@ func main() {
 		},
 	}))
 
+	app.Use(func(c *fiber.Ctx) error {
+		if strings.HasPrefix(c.Path(), "/api") {
+			return c.Next()
+		}
+
+		// Set proper MIME types for different file extensions
+		path := c.Path()
+		switch {
+		case strings.HasSuffix(path, ".js"):
+			c.Set("Content-Type", "application/javascript")
+		case strings.HasSuffix(path, ".mjs"):
+			c.Set("Content-Type", "application/javascript")
+		case strings.HasSuffix(path, ".css"):
+			c.Set("Content-Type", "text/css")
+		case strings.HasSuffix(path, ".html"):
+			c.Set("Content-Type", "text/html")
+		}
+
+		return c.SendFile("./build/index.html")
+	})
+
+	// Add X-Content-Type-Options header
+	app.Use(func(c *fiber.Ctx) error {
+		c.Set("X-Content-Type-Options", "nosniff")
+		return c.Next()
+	})
+
 	// Add ETag support
 	app.Use(etag.New())
 

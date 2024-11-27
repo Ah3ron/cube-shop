@@ -1,5 +1,6 @@
 <script>
 	import { authApi } from '$lib/api/auth.js';
+	
 	let email = '';
 	let password = '';
 	let error = '';
