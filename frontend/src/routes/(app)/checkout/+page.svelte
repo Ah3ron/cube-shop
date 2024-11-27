@@ -14,24 +14,24 @@
 		country: '',
 		zipCode: ''
 	};
-	
+
 	let cartData = {};
-	 
+
 	onMount(async () => {
-     cartData = await cartApi.get()
+		cartData = await cartApi.get();
 	});
-	
+
 	async function handleSubmit() {
 		loading = true;
 		error = null;
-		
+
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
 				window.location.href = '/login';
 				return;
 			}
-			
+
 			await ordersApi.checkout({
 				name: formData.name,
 				email: formData.email,
@@ -48,7 +48,7 @@
 			loading = false;
 		}
 	}
-	
+
 	function validateZipCode(event) {
 		const value = event.target.value;
 		if (!/^\d{5}(-\d{4})?$/.test(value)) {
@@ -61,12 +61,12 @@
 	}
 	async () => {
 		console.log(await cartApi.get());
-	}
+	};
 </script>
 
 <div class="container mx-auto px-4 py-8 mt-16">
 	<h1 class="text-3xl font-bold mb-8">Secure Checkout</h1>
-	
+
 	{#if $cart.length === 0}
 		<div class="text-center py-8">
 			<p class="text-xl mb-4">Your cart is empty</p>

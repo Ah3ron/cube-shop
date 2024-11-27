@@ -77,7 +77,7 @@
 			<div class="divider">OR</div>
 
 			<div class="text-center">
-				<a href='/login" class="link link-hover">Already have an account?</a>
+				<a href="/login" class="link link-hover">Already have an account?</a>
 			</div>
 		</div>
 	</div>

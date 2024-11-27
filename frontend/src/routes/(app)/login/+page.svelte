@@ -1,6 +1,6 @@
 <script>
 	import { authApi } from '$lib/api/auth.js';
-	
+
 	let email = '';
 	let password = '';
 	let error = '';
@@ -69,7 +69,7 @@
 			<div class="divider">OR</div>
 
 			<div class="text-center">
-				<a href='/register" class="link link-hover">Create new account</a>
+				<a href="/register" class="link link-hover">Create new account</a>
 			</div>
 		</div>
 	</div>
