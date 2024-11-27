@@ -109,7 +109,7 @@
 						{cart.total.toLocaleString()} $
 					</span>
 				</div>
-				<hr />
+				<div class="divider"></div>
 				<div class="flex justify-end mt-6">
 					<a href="/checkout" class="btn btn-primary btn-lg"> Оформить заказ </a>
 				</div>

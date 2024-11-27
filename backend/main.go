@@ -43,7 +43,13 @@ func main() {
 	}))
 
 	// CORS with optimized settings
-	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "*",
+		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		ExposeHeaders:    "Content-Length",
+		AllowCredentials: true,
+	}))
 
 	// Compression with enhanced settings
 	app.Use(compress.New(compress.Config{
@@ -56,22 +62,18 @@ func main() {
 	// Enhanced caching strategy
 	app.Use(cache.New(cache.Config{
 		Next: func(c *fiber.Ctx) bool {
-			if c.Method() != "GET" && c.Method() != "HEAD" {
+			if c.Method() != "GET" {
 				return true
 			}
 			path := c.Path()
-			isStaticAsset := strings.HasSuffix(path, ".css") ||
-				strings.HasSuffix(path, ".js") ||
-				strings.HasSuffix(path, ".jpg") ||
-				strings.HasSuffix(path, ".png") ||
-				strings.HasSuffix(path, ".ico") ||
-				strings.HasSuffix(path, ".woff2") ||
-				strings.HasSuffix(path, ".webp")
-			return !isStaticAsset || c.Query("noCache") == "true"
+			return strings.HasPrefix(path, "/api")
 		},
-		Expiration:           30 * time.Minute,
+		Expiration:           24 * time.Hour,
 		CacheControl:         true,
 		StoreResponseHeaders: true,
+		KeyGenerator: func(c *fiber.Ctx) string {
+			return c.Path()
+		},
 	}))
 
 	// Add ETag support

@@ -3,10 +3,9 @@ package routes
 import (
 	"cube-shop/handlers"
 	"cube-shop/middleware"
-	"net/http"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
 )
 
 func SetupRoutes(app *fiber.App) {
@@ -74,10 +73,13 @@ func setupOrderRoutes(protected fiber.Router) {
 }
 
 func setupStaticFiles(app *fiber.App) {
-	app.Use("/", filesystem.New(filesystem.Config{
-		Root:         http.Dir("build"),
-		Browse:       true,
-		Index:        "index.html",
-		NotFoundFile: "404.html",
-	}))
+	app.Static("/", "./build")
+
+	app.Use(func(c *fiber.Ctx) error {
+		if strings.HasPrefix(c.Path(), "/api") {
+			return c.Next()
+		}
+		return c.SendFile("./build/index.html")
+	})
+
 }

@@ -1,6 +1,8 @@
 <script>
 	import { cart } from '$lib/stores/cart';
 	import { ordersApi } from '$lib/api/orders';
+	import { cartApi } from '$lib/api/cart.js';
+	import { onMount } from 'svelte';
 
 	let loading = false;
 	let error = null;
@@ -12,21 +14,24 @@
 		country: '',
 		zipCode: ''
 	};
-
-	$: cartTotal =
-		$cart?.items?.reduce((sum, item) => sum + item.product.price * item.quantity, 0) || 0;
-
+	
+	let cartData = {};
+	 
+	onMount(async () => {
+     cartData = await cartApi.get()
+	});
+	
 	async function handleSubmit() {
 		loading = true;
 		error = null;
-
+		
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
 				window.location.href = '/auth/login';
 				return;
 			}
-
+			
 			await ordersApi.checkout({
 				name: formData.name,
 				email: formData.email,
@@ -36,8 +41,6 @@
 				zipCode: formData.zipCode
 			});
 
-			// Очищаем корзину и перенаправляем на страницу заказов
-			await cart.clear();
 			window.location.href = '/orders';
 		} catch (err) {
 			error = err.message;
@@ -45,7 +48,7 @@
 			loading = false;
 		}
 	}
-
+	
 	function validateZipCode(event) {
 		const value = event.target.value;
 		if (!/^\d{5}(-\d{4})?$/.test(value)) {
@@ -56,11 +59,14 @@
 			event.target.setCustomValidity('');
 		}
 	}
+	async () => {
+		console.log(await cartApi.get());
+	}
 </script>
 
 <div class="container mx-auto px-4 py-8 mt-16">
 	<h1 class="text-3xl font-bold mb-8">Secure Checkout</h1>
-
+	
 	{#if $cart.length === 0}
 		<div class="text-center py-8">
 			<p class="text-xl mb-4">Your cart is empty</p>
@@ -233,7 +239,7 @@
 							Order Summary
 						</h2>
 						<div class="divider"></div>
-						{#each $cart as item}
+						{#each cartData.items as item}
 							<div class="flex justify-between items-center mb-2">
 								<div class="flex items-center">
 									<span class="font-medium">{item.product.name}</span>
@@ -245,7 +251,7 @@
 						<div class="divider"></div>
 						<div class="text-lg font-bold flex justify-between">
 							<span>Total:</span>
-							<span>${cartTotal.toFixed(2)}</span>
+							<span>${cartData.total}</span>
 						</div>
 						<button
 							class="btn btn-primary btn-lg mt-4 w-full"
