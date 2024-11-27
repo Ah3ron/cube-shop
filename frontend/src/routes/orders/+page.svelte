@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { ordersApi } from '$lib/api/orders.js';
 
 	let orders = [];
 	let loading = true;
@@ -13,18 +14,7 @@
 				return;
 			}
 
-			const response = await fetch('/api/orders', {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
-
-			if (!response.ok) {
-				throw new Error('Failed to fetch orders');
-			}
-
-			orders = await response.json();
+			orders = await ordersApi.getAll();
 		} catch (err) {
 			error = err.message;
 		} finally {
@@ -33,7 +23,7 @@
 	});
 
 	function formatDate(dateString) {
-		return new Date(dateString).toLocaleDateString('en-US', {
+		return new Date(dateString).toLocaleDateString('ru-RU', {
 			year: 'numeric',
 			month: 'long',
 			day: 'numeric'
@@ -42,7 +32,7 @@
 </script>
 
 <div class="container mx-auto px-4 py-8 mt-10">
-	<h1 class="text-3xl font-bold mb-8">My Orders</h1>
+	<h1 class="text-3xl font-bold mb-8">Мои заказы</h1>
 
 	{#if loading}
 		<div class="flex justify-center">
@@ -68,26 +58,32 @@
 		</div>
 	{:else if orders.length === 0}
 		<div class="text-center py-8">
-			<p class="text-xl mb-4">You haven't placed any orders yet</p>
-			<a href="/catalog" class="btn btn-primary">Start Shopping</a>
+			<p class="text-xl mb-4">У вас пока нет заказов</p>
+			<a href="/catalog" class="btn btn-primary">Перейти в каталог</a>
 		</div>
 	{:else}
 		<div class="space-y-6">
 			{#each orders as order}
 				<div class="card bg-base-100 shadow-xl">
 					<div class="card-body">
-						<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+						<div
+							class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+						>
 							<div>
-								<h2 class="card-title">Order #{order.ID}</h2>
-								<p class="text-base-content/70">Placed on {formatDate(order.CreatedAt)}</p>
+								<h2 class="card-title">Заказ №{order.ID}</h2>
+								<p class="text-base-content/70">Оформлен {formatDate(order.CreatedAt)}</p>
 							</div>
 							<div
 								class="badge badge-lg"
-								class:badge-success={order.Status === 'completed'}
-								class:badge-warning={order.Status === 'pending'}
-								class:badge-error={order.Status === 'cancelled'}
+								class:badge-success={order.status === 'completed'}
+								class:badge-warning={order.status === 'pending'}
+								class:badge-error={order.status === 'cancelled'}
 							>
-								{order.Status}
+								{order.status === 'completed'
+									? 'Выполнен'
+									: order.status === 'pending'
+										? 'В обработке'
+										: 'Отменён'}
 							</div>
 						</div>
 
@@ -104,10 +100,10 @@
 										/>
 										<div>
 											<h3 class="font-medium">{item.product.name}</h3>
-											<p class="text-sm text-base-content/70">Quantity: {item.quantity}</p>
+											<p class="text-sm text-base-content/70">Количество: {item.quantity}</p>
 										</div>
 									</div>
-									<p class="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+									<p class="font-medium">{(item.price * item.quantity).toLocaleString()}$</p>
 								</div>
 							{/each}
 						</div>
@@ -116,7 +112,7 @@
 
 						<div class="flex flex-col md:flex-row justify-between gap-4">
 							<div>
-								<h3 class="font-medium mb-2">Shipping Details</h3>
+								<h3 class="font-medium mb-2">Данные доставки</h3>
 								{#if order.shipping_details?.name}
 									<p class="text-sm">{order.shipping_details.name}</p>
 									<p class="text-sm">{order.shipping_details.email}</p>
@@ -127,12 +123,12 @@
 										{order.shipping_details.zipCode}
 									</p>
 								{:else}
-									<p class="text-sm text-base-content/70">No shipping details available</p>
+									<p class="text-sm text-base-content/70">Данные о доставке отсутствуют</p>
 								{/if}
 							</div>
 							<div class="text-right">
-								<p class="text-sm mb-1">Order Total:</p>
-								<p class="text-2xl font-bold">${order.total_price.toFixed(2)}</p>
+								<p class="text-sm mb-1">Итого:</p>
+								<p class="text-2xl font-bold">{order.total_price.toLocaleString()} $</p>
 							</div>
 						</div>
 					</div>

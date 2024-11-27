@@ -1,10 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
+	import { userApi } from '$lib/api/user.js';
 
 	let profile = {
-		name: '',
-		email: '',
-		joinDate: ''
+		created_at: null,
+		email: null,
+		id: null,
+		name: null
 	};
 
 	let isLoading = true;
@@ -12,28 +14,10 @@
 
 	onMount(async () => {
 		try {
-			const token = localStorage.getItem('token');
-			if (!token) {
-				window.location.href = '/auth/login';
-				return;
-			}
-
-			const response = await fetch('/api/profile', {
-				headers: {
-					Authorization: `Bearer ${token}`,
-					'Cache-Control': 'no-cache',
-					Pragma: 'no-cache'
-				}
-			});
-
-			if (!response.ok) {
-				throw new Error('Failed to fetch profile data');
-			}
-
-			profile = await response.json();
-			isLoading = false;
+			profile = await userApi.getProfile();
 		} catch (err) {
-			error = err.message;
+			error = err;
+		} finally {
 			isLoading = false;
 		}
 	});
@@ -63,7 +47,7 @@
 					<div class="space-y-2">
 						<h2 class="text-2xl font-semibold">{profile.name}</h2>
 						<p class="text-base-content/70">{profile.email}</p>
-						<p class="text-sm">Member since: {new Date(profile.joinDate).toLocaleDateString()}</p>
+						<p class="text-sm">Member since: {new Date(profile.created_at).toLocaleDateString()}</p>
 					</div>
 				</div>
 

@@ -1,4 +1,5 @@
 <script>
+	import { authApi } from '$lib/api/auth.js';
 	let email = '';
 	let password = '';
 	let error = '';
@@ -6,18 +7,7 @@
 	async function handleLogin(e) {
 		e.preventDefault();
 		try {
-			const res = await fetch('/api/auth/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, password })
-			});
-
-			if (!res.ok) {
-				const data = await res.json();
-				throw new Error(data.error);
-			}
-
-			const data = await res.json();
+			let data = await authApi.login(email, password);
 			localStorage.setItem('token', data.token);
 			window.location.href = '/';
 		} catch (err) {

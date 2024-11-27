@@ -35,7 +35,6 @@ func setupPublicProductRoutes(api fiber.Router) {
 	products := api.Group("/products")
 	products.Get("/", handlers.GetProducts)
 	products.Get("/:id", handlers.GetProduct)
-	products.Get("/categories", handlers.GetCategories)
 	products.Get("/search", handlers.SearchProducts)
 }
 

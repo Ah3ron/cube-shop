@@ -66,29 +66,6 @@ func GetProduct(c *fiber.Ctx) error {
 	return c.JSON(product)
 }
 
-// GetCategories возвращает список всех категорий
-func GetCategories(c *fiber.Ctx) error {
-	var categories []string
-
-	// Изменяем запрос для получения уникальных категорий
-	result := database.DB.Model(&models.Product{}).
-		Select("DISTINCT category").
-		Where("category IS NOT NULL AND category != ''").
-		Order("category ASC").
-		Pluck("category", &categories)
-
-	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Не удалось получить категории",
-		})
-	}
-
-	// Возвращаем массив категорий в формате JSON
-	return c.JSON(fiber.Map{
-		"categories": categories,
-	})
-}
-
 // SearchProducts выполняет поиск по продуктам
 func SearchProducts(c *fiber.Ctx) error {
 	query := c.Query("q")

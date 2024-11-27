@@ -23,8 +23,9 @@ func GetProfile(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"id":         userProfile.ID,
-		"email":      userProfile.Email,
 		"name":       userProfile.Name,
+		"email":      userProfile.Email,
+		"role":       userProfile.Role,
 		"created_at": userProfile.CreatedAt,
 	})
 }

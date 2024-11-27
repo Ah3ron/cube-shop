@@ -1,5 +1,7 @@
 <script>
 	import { cart } from '$lib/stores/cart';
+	import { ordersApi } from '$lib/api/orders';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
 	let loading = false;
@@ -13,8 +15,9 @@
 		zipCode: ''
 	};
 
-	// Calculate cart total
-	$: cartTotal = $cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+	// Реактивное вычисление общей суммы корзины
+	$: cartTotal =
+		$cart?.items?.reduce((sum, item) => sum + item.product.price * item.quantity, 0) || 0;
 
 	async function handleSubmit() {
 		loading = true;
@@ -23,55 +26,35 @@
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
-				window.location.href = '/auth/login';
+				goto('/auth/login');
 				return;
 			}
 
-			// Create checkout request matching CheckoutRequest struct
-			const checkoutRequest = {
-				items: $cart.map((item) => ({
-					product_id: item.product.id,
-					quantity: item.quantity,
-					product: item.product
-				})),
-				total: cartTotal,
-				shippingDetails: {
-					name: formData.name,
-					email: formData.email,
-					address: formData.address,
-					city: formData.city,
-					country: formData.country,
-					zipCode: formData.zipCode
-				}
-			};
-
-			const response = await fetch('/api/checkout', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`
-				},
-				body: JSON.stringify(checkoutRequest)
+			await ordersApi.checkout({
+				name: formData.name,
+				email: formData.email,
+				address: formData.address,
+				city: formData.city,
+				country: formData.country,
+				zipCode: formData.zipCode
 			});
 
-			if (!response.ok) {
-				const data = await response.json();
-				throw new Error(data.error || 'Checkout failed');
-			}
-
-			// Clear cart and redirect
-			cart.set([]);
-			window.location.href = '/orders';
+			// Очищаем корзину и перенаправляем на страницу заказов
+			await cart.clear();
+			goto('/orders');
 		} catch (err) {
 			error = err.message;
 		} finally {
 			loading = false;
 		}
 	}
+
 	function validateZipCode(event) {
 		const value = event.target.value;
 		if (!/^\d{5}(-\d{4})?$/.test(value)) {
-			event.target.setCustomValidity('Please enter a valid ZIP code (e.g., 12345 or 12345-6789)');
+			event.target.setCustomValidity(
+				'Введите корректный почтовый индекс (например: 12345 или 12345-6789)'
+			);
 		} else {
 			event.target.setCustomValidity('');
 		}

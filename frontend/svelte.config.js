@@ -18,6 +18,6 @@ export default {
 				'upgrade-insecure-requests': false,
 				'block-all-mixed-content': false
 			}
-		},
+		}
 	}
 };

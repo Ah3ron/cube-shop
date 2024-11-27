@@ -1,5 +1,6 @@
 <!-- src/routes/auth/register/+page.svelte -->
 <script>
+	import { authApi } from '$lib/api/auth.js';
 	let name = '';
 	let email = '';
 	let password = '';
@@ -8,16 +9,7 @@
 	async function handleRegister(e) {
 		e.preventDefault();
 		try {
-			const res = await fetch('/api/auth/register', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ name, email, password })
-			});
-
-			if (!res.ok) {
-				const data = await res.json();
-				throw new Error(data.error);
-			}
+			await authApi.register(email, password, name);
 
 			window.location.href = '/auth/login';
 		} catch (err) {
