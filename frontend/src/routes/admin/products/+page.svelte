@@ -29,7 +29,7 @@
 					Authorization: `Bearer ${localStorage.getItem('token')}`
 				}
 			});
-			products = products.filter((p) => p.id !== id);
+			products = products.filter((p) => p.ID !== id);
 		} catch (err) {
 			alert('Ошибка при удалении товара');
 		}
@@ -42,7 +42,7 @@
 
 	async function saveProduct() {
 		try {
-			const response = await fetch(`/api/v1/products/${editingProduct.id}`, {
+			const response = await fetch(`/api/v1/products/${editingProduct.ID}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
@@ -52,7 +52,7 @@
 			});
 
 			const updatedProduct = await response.json();
-			products = products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p));
+			products = products.map((p) => (p.ID === updatedProduct.ID ? updatedProduct : p));
 			showEditModal = false;
 		} catch (err) {
 			alert('Ошибка при обновлении товара');
@@ -60,7 +60,7 @@
 	}
 </script>
 
-<div class="p-4">
+<div class="p-4 bg-base-100 rounded-box shadow-md">
 	<div class="flex justify-between items-center mb-6">
 		<h1 class="text-2xl font-bold">Управление товарами</h1>
 		<a href="/admin/products/new" class="btn btn-primary">Добавить товар</a>
@@ -88,7 +88,7 @@
 				<tbody>
 					{#each products as product}
 						<tr>
-							<td>{product.id}</td>
+							<td>{product.ID}</td>
 							<td>
 								<img
 									src={product.image_url}
@@ -103,7 +103,7 @@
 								<button class="btn btn-sm btn-info" on:click={() => handleEdit(product)}>
 									Редактировать
 								</button>
-								<button class="btn btn-sm btn-error" on:click={() => handleDelete(product.id)}>
+								<button class="btn btn-sm btn-error" on:click={() => handleDelete(product.ID)}>
 									Удалить
 								</button>
 							</td>
@@ -121,6 +121,7 @@
 			<h3 class="font-bold text-lg mb-4">Редактировать товар</h3>
 			<form on:submit|preventDefault={saveProduct} class="space-y-4">
 				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="label">Название</label>
 					<input
 						type="text"
@@ -131,6 +132,7 @@
 				</div>
 
 				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="label">Цена</label>
 					<input
 						type="number"
@@ -143,6 +145,7 @@
 				</div>
 
 				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="label">Остаток</label>
 					<input
 						type="number"
@@ -154,6 +157,7 @@
 				</div>
 
 				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="label">Описание</label>
 					<textarea
 						bind:value={editingProduct.description}
