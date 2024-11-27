@@ -13,7 +13,7 @@
 			const response = await fetch('/api/v1/products');
 			products = await response.json();
 		} catch (err) {
-			error = err.message;
+			console.log(err.message);
 		} finally {
 			loading = false;
 		}
@@ -31,7 +31,7 @@
 			});
 			products = products.filter((p) => p.ID !== id);
 		} catch (err) {
-			alert('Ошибка при удалении товара');
+			alert('Ошибка при удалении товара: ' + err.message);
 		}
 	}
 
@@ -55,7 +55,41 @@
 			products = products.map((p) => (p.ID === updatedProduct.ID ? updatedProduct : p));
 			showEditModal = false;
 		} catch (err) {
-			alert('Ошибка при обновлении товара');
+			alert('Ошибка при обновлении товара: ' + err.message);
+		}
+	}
+	let showAddModal = false;
+	let newProduct = {
+		name: '',
+		price: 0,
+		stock: 0,
+		description: '',
+		image_url: ''
+	};
+	async function handleAddProduct() {
+		try {
+			const response = await fetch('/api/v1/products', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${localStorage.getItem('token')}`
+				},
+				body: JSON.stringify(newProduct)
+			});
+
+			const addedProduct = await response.json();
+			products = [...products, addedProduct];
+			showAddModal = false;
+			// Reset the form
+			newProduct = {
+				name: '',
+				price: 0,
+				stock: 0,
+				description: '',
+				image_url: ''
+			};
+		} catch (err) {
+			alert('Ошибка при добавлении товара: ' + err.message);
 		}
 	}
 </script>
@@ -63,7 +97,10 @@
 <div class="p-4 bg-base-100 rounded-box shadow-md">
 	<div class="flex justify-between items-center mb-6">
 		<h1 class="text-2xl font-bold">Управление товарами</h1>
-		<a href="/admin/products/new" class="btn btn-primary">Добавить товар</a>
+		<div class="flex justify-between items-center mb-6">
+			<h1 class="text-2xl font-bold">Управление товарами</h1>
+			<button class="btn btn-primary" on:click={() => (showAddModal = true)}>Добавить товар</button>
+		</div>
 	</div>
 
 	{#if loading}
@@ -169,6 +206,71 @@
 				<div class="modal-action">
 					<button type="submit" class="btn btn-primary">Сохранить</button>
 					<button type="button" class="btn" on:click={() => (showEditModal = false)}>Отмена</button>
+				</div>
+			</form>
+		</div>
+	</div>
+{/if}
+
+{#if showAddModal}
+	<div class="modal modal-open">
+		<div class="modal-box">
+			<h3 class="font-bold text-lg mb-4">Добавить новый товар</h3>
+			<form on:submit|preventDefault={handleAddProduct} class="space-y-4">
+				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
+					<label class="label">Название</label>
+					<input type="text" bind:value={newProduct.name} class="input input-bordered" required />
+				</div>
+
+				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
+					<label class="label">Цена</label>
+					<input
+						type="number"
+						bind:value={newProduct.price}
+						class="input input-bordered"
+						required
+						min="0"
+						step="0.01"
+					/>
+				</div>
+
+				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
+					<label class="label">Остаток</label>
+					<input
+						type="number"
+						bind:value={newProduct.stock}
+						class="input input-bordered"
+						required
+						min="0"
+					/>
+				</div>
+
+				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
+					<label class="label">URL изображения</label>
+					<input
+						type="url"
+						bind:value={newProduct.image_url}
+						class="input input-bordered"
+						required
+					/>
+				</div>
+
+				<div class="form-control">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
+					<label class="label">Описание</label>
+					<textarea bind:value={newProduct.description} class="textarea textarea-bordered" rows="3"
+					></textarea>
+				</div>
+
+				<div class="modal-action">
+					<button type="submit" class="btn btn-primary">Добавить</button>
+					<button type="button" class="btn" on:click={() => (showAddModal = false)}>
+						Отмена
+					</button>
 				</div>
 			</form>
 		</div>

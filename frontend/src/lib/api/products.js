@@ -1,4 +1,4 @@
-import { API_URL, handleResponse, getAuthHeaders } from './config';
+import { API_URL, handleResponse } from './config';
 
 export const productsApi = {
 	getAll: async (filters = {}) => {

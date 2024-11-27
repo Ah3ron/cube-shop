@@ -1,5 +1,5 @@
 <script>
-	import { fade, fly, scale } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import AddToCartButton from '$lib/AddToCartButton.svelte';
 	import { productsApi } from '$lib/api/products.js';

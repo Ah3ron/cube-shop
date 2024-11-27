@@ -217,7 +217,7 @@ func CancelOrder(c *fiber.Ctx) error {
 
 func UpdateOrderStatus(c *fiber.Ctx) error {
 	orderID := c.Params("id")
-	
+
 	var input struct {
 		Status string `json:"status"`
 	}
@@ -236,11 +236,9 @@ func UpdateOrderStatus(c *fiber.Ctx) error {
 	}
 
 	allowedStatuses := map[string]bool{
-		"pending":    true,
-		"processing": true,
-		"shipped":    true,
-		"delivered":  true,
-		"cancelled":  true,
+		"pending":   true,
+		"completed": true,
+		"cancelled": true,
 	}
 
 	if !allowedStatuses[input.Status] {
@@ -274,5 +272,11 @@ func GetAllOrders(c *fiber.Ctx) error {
 		})
 	}
 
+	if len(orders) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Заказы не найдены",
+		})
+	}
+
 	return c.JSON(orders)
-} 
+}

@@ -1,5 +1,4 @@
 <script>
-	import { cart } from '$lib/stores/cart';
 	import { cartApi } from '$lib/api/cart.js';
 
 	export let product;
@@ -11,8 +10,9 @@
 			await cartApi.addItem(product.ID, 1);
 		} catch (error) {
 			console.error('Failed to add to cart:', error);
+		} finally {
+			loading = false;
 		}
-		loading = false;
 	}
 </script>
 

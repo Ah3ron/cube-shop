@@ -2,7 +2,6 @@
 	import { cart } from '$lib/stores/cart';
 	import { ordersApi } from '$lib/api/orders';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 
 	let loading = false;
 	let error = null;
@@ -15,7 +14,6 @@
 		zipCode: ''
 	};
 
-	// Реактивное вычисление общей суммы корзины
 	$: cartTotal =
 		$cart?.items?.reduce((sum, item) => sum + item.product.price * item.quantity, 0) || 0;
 

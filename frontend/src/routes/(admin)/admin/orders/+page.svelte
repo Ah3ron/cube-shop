@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { ordersApi } from '$lib/api/orders.js';
 
 	let orders = [];
 	let loading = true;
@@ -7,12 +8,7 @@
 
 	onMount(async () => {
 		try {
-			const response = await fetch('/api/v1/orders/all', {
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem('token')}`
-				}
-			});
-			orders = await response.json();
+			orders = await ordersApi.getAll();
 		} catch (err) {
 			error = err.message;
 		} finally {
@@ -22,19 +18,12 @@
 
 	async function updateStatus(orderId, newStatus) {
 		try {
-			const response = await fetch(`/api/v1/orders/${orderId}/status`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('token')}`
-				},
-				body: JSON.stringify({ status: newStatus })
-			});
-
-			const updatedOrder = await response.json();
-			orders = orders.map((o) => (o.id === updatedOrder.id ? updatedOrder : o));
+			await ordersApi.updateStatus(orderId, newStatus);
+			orders = orders.map((order) =>
+				order.ID === orderId ? { ...order, status: newStatus } : order
+			);
 		} catch (err) {
-			alert('Ошибка при обновлении статуса');
+			alert('Ошибка при обновлении статуса: ' + err.message);
 		}
 	}
 
@@ -42,11 +31,7 @@
 		switch (status) {
 			case 'pending':
 				return 'badge-warning';
-			case 'processing':
-				return 'badge-info';
-			case 'shipped':
-				return 'badge-success';
-			case 'delivered':
+			case 'completed':
 				return 'badge-success';
 			case 'cancelled':
 				return 'badge-error';
@@ -56,7 +41,7 @@
 	}
 </script>
 
-<div class="p-4">
+<div class="p-4 bg-base-100 rounded-box shadow-md">
 	<h1 class="text-2xl font-bold mb-6">Управление заказами</h1>
 
 	{#if loading}
@@ -81,7 +66,7 @@
 				<tbody>
 					{#each orders as order}
 						<tr>
-							<td>{order.id}</td>
+							<td>{order.ID}</td>
 							<td>{new Date(order.created_at).toLocaleDateString()}</td>
 							<td>{order.shipping_details.name}</td>
 							<td>${order.total_price}</td>
@@ -94,12 +79,10 @@
 								<select
 									class="select select-bordered select-sm"
 									value={order.status}
-									on:change={(e) => updateStatus(order.id, e.target.value)}
+									on:change={(e) => updateStatus(order.ID, e.target.value)}
 								>
 									<option value="pending">В ожидании</option>
-									<option value="processing">В обработке</option>
-									<option value="shipped">Отправлен</option>
-									<option value="delivered">Доставлен</option>
+									<option value="completed">Завершен</option>
 									<option value="cancelled">Отменен</option>
 								</select>
 							</td>

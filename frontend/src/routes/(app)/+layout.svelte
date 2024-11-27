@@ -1,5 +1,5 @@
 <script>
-	import '../app.css';
+	import '../../app.css';
 	let { children } = $props();
 	import { page } from '$app/stores';
 	import { cart } from '$lib/stores/cart';

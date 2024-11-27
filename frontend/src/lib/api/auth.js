@@ -1,4 +1,4 @@
-import { API_URL, handleResponse } from './config';
+import { API_URL, handleResponse, getAuthHeaders } from './config';
 
 export const authApi = {
 	register: async (email, password, name) => {

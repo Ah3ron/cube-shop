@@ -22,5 +22,14 @@ export const ordersApi = {
 			headers: getAuthHeaders()
 		});
 		return handleResponse(response);
+	},
+
+	updateStatus: async (id, status) => {
+		const response = await fetch(`${API_URL}/orders/${id}/status`, {
+			method: 'PUT',
+			headers: getAuthHeaders(),
+			body: JSON.stringify({ status })
+		});
+		return handleResponse(response);
 	}
 };
