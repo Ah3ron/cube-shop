@@ -126,27 +126,51 @@ func CreateProduct(c *fiber.Ctx) error {
 
 // UpdateProduct обновляет существующий продукт (только для админов)
 func UpdateProduct(c *fiber.Ctx) error {
-	id := c.Params("id")
-	product := new(models.Product)
+	productID := c.Params("id")
 
-	if err := c.BodyParser(product); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Неверный формат данных",
+	// Проверяем существование продукта
+	var product models.Product
+	if err := database.DB.First(&product, productID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Продукт не найден",
 		})
 	}
 
-	result := database.DB.Model(&models.Product{}).Where("id = ?", id).Updates(product)
-	if result.Error != nil {
+	// Парсим данные из запроса
+	var updateData models.Product
+	if err := c.BodyParser(&updateData); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Некорректные данные",
+		})
+	}
+
+	// Обновляем только разрешенные поля
+	updates := map[string]interface{}{
+		"name":        updateData.Name,
+		"description": updateData.Description,
+		"price":       updateData.Price,
+		"stock":       updateData.Stock,
+		"image_url":   updateData.ImageURL,
+		"category":    updateData.Category,
+		"difficulty":  updateData.Difficulty,
+		"brand":       updateData.Brand,
+	}
+
+	// Выполняем обновление
+	if err := database.DB.Model(&product).Updates(updates).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Не удалось обновить продукт",
 		})
 	}
 
 	// Получаем обновленный продукт
-	var updatedProduct models.Product
-	database.DB.First(&updatedProduct, id)
+	if err := database.DB.First(&product, productID).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Не удалось получить обновленный продукт",
+		})
+	}
 
-	return c.JSON(updatedProduct)
+	return c.JSON(product)
 }
 
 // DeleteProduct удаляет продукт (только для админов)
