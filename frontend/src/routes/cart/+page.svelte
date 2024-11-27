@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { cartApi } from '$lib/api';
+	import { cartApi } from '$lib/api/cart.js';
 
 	let cart = { items: [], total: 0 };
 	let loading = true;
