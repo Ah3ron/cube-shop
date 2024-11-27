@@ -2,7 +2,6 @@
 	import '../../../app.css';
 	import { onMount } from 'svelte';
 
-	import { goto } from '$app/navigation';
 	import { userApi } from '$lib/api/user.js';
 
 	let isAdmin = false;
@@ -10,21 +9,21 @@
 	onMount(async () => {
 		const token = localStorage.getItem('token');
 		if (!token) {
-			goto('/auth/login');
+			window.location.href = '/auth/login';
 			return;
 		}
 
 		try {
 			const data = await userApi.getProfile();
 			if (!data.role || data.role !== 'admin') {
-				goto('/');
+				window.location.href = '/auth/login';
 			} else {
 				isAdmin = true;
 			}
 		} catch (error) {
 			console.log(error);
 
-			goto('/auth/login');
+			window.location.href = '/auth/login';
 		}
 	});
 </script>

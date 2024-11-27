@@ -1,7 +1,6 @@
 <script>
 	import { cart } from '$lib/stores/cart';
 	import { ordersApi } from '$lib/api/orders';
-	import { goto } from '$app/navigation';
 
 	let loading = false;
 	let error = null;
@@ -24,7 +23,7 @@
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
-				goto('/auth/login');
+				window.location.href = '/auth/login';
 				return;
 			}
 
@@ -39,7 +38,7 @@
 
 			// Очищаем корзину и перенаправляем на страницу заказов
 			await cart.clear();
-			goto('/orders');
+			window.location.href = '/orders';
 		} catch (err) {
 			error = err.message;
 		} finally {

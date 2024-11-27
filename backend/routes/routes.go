@@ -78,6 +78,6 @@ func setupStaticFiles(app *fiber.App) {
 		Root:         http.Dir("build"),
 		Browse:       true,
 		Index:        "index.html",
-		NotFoundFile: "index.html",
+		NotFoundFile: "404.html",
 	}))
 }
