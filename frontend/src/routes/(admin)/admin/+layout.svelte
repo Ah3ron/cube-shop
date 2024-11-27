@@ -9,21 +9,21 @@
 	onMount(async () => {
 		const token = localStorage.getItem('token');
 		if (!token) {
-			window.location.href = '/auth/login';
+			window.location.href = '/login';
 			return;
 		}
 
 		try {
 			const data = await userApi.getProfile();
 			if (!data.role || data.role !== 'admin') {
-				window.location.href = '/auth/login';
+				window.location.href = '/login';
 			} else {
 				isAdmin = true;
 			}
 		} catch (error) {
 			console.log(error);
 
-			window.location.href = '/auth/login';
+			window.location.href = '/login';
 		}
 	});
 </script>

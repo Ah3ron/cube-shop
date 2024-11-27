@@ -15,7 +15,7 @@
 
 	function handleLogout() {
 		localStorage.removeItem('token');
-		window.location.href = '/auth/login';
+		window.location.href = '/login';
 	}
 
 	$effect(() => {
@@ -153,7 +153,7 @@
 					</ul>
 				</div>
 			{:else}
-				<a href="/auth/login" class="btn btn-primary ml-4">Login</a>
+				<a href='/login" class="btn btn-primary ml-4">Login</a>
 			{/if}
 		</div>
 	</header>

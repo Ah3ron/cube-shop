@@ -11,7 +11,7 @@
 		try {
 			await authApi.register(email, password, name);
 
-			window.location.href = '/auth/login';
+			window.location.href = '/login';
 		} catch (err) {
 			error = err.message;
 		}
@@ -77,7 +77,7 @@
 			<div class="divider">OR</div>
 
 			<div class="text-center">
-				<a href="/auth/login" class="link link-hover">Already have an account?</a>
+				<a href='/login" class="link link-hover">Already have an account?</a>
 			</div>
 		</div>
 	</div>
