@@ -1,4 +1,4 @@
-import { API_URL, handleResponse } from './config';
+import { API_URL, getAuthHeaders, handleResponse } from './config';
 
 export const productsApi = {
 	getAll: async (filters = {}) => {
@@ -15,5 +15,19 @@ export const productsApi = {
 	search: async (query) => {
 		const response = await fetch(`${API_URL}/products/search?q=${query}`);
 		return handleResponse(response);
+	},
+
+	delete: async (id) => {
+		const response = await fetch(`${API_URL}/products/${id}`, {
+			method: 'DELETE',
+			headers: getAuthHeaders()
+		});
+
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(error.error || 'Failed to delete product');
+		}
+
+		return response.status === 204 ? true : await response.json();
 	}
 };
