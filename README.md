@@ -21,7 +21,7 @@ A delightful web application built with SvelteKit! 🚀
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Ah3ron/cube-shop
 ```
 
 2. Install dependencies:
