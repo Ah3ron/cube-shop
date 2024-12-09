@@ -12,7 +12,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cache"
 	"github.com/gofiber/fiber/v2/middleware/compress"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 )
@@ -32,15 +31,15 @@ func main() {
 		JSONDecoder:             json.Unmarshal,
 	})
 
-	// CORS with secure settings
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:8080, https://cube-shop.up.railway.app/",
-		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
-		ExposeHeaders:    "Content-Length",
-		AllowCredentials: true,
-		MaxAge:           int((24 * time.Hour).Seconds()),
-	}))
+	// // CORS with secure settings
+	// app.Use(cors.New(cors.Config{
+	// 	AllowOrigins:     "http://localhost:8080, https://cube-shop.up.railway.app/",
+	// 	AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
+	// 	AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+	// 	ExposeHeaders:    "Content-Length",
+	// 	AllowCredentials: true,
+	// 	MaxAge:           int((24 * time.Hour).Seconds()),
+	// }))
 
 	// Compression with enhanced settings
 	app.Use(compress.New(compress.Config{
